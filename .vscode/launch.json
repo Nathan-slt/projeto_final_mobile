@@ -1,0 +1,17 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Flutter Web",
+            "request": "launch",
+            "type": "dart",
+            "deviceId": "chrome",
+            "args": [
+                "--web-port",
+                "8081",
+                "--web-hostname",
+                "127.0.0.1"
+            ]
+        }
+    ]
+}

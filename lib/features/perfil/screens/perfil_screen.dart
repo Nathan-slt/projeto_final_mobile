@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:projeto_final/features/home/screens/home_screen.dart';
 
 class PerfilScreen extends StatelessWidget {
   const PerfilScreen({super.key});
@@ -155,73 +156,132 @@ class PerfilScreen extends StatelessWidget {
       ),
 
       bottomNavigationBar: BottomAppBar(
-        height: 66,
-        color: primary,
+        height: 60,
+        color: Theme.of(context).colorScheme.primary,
+
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
+
           children: [
-            _buildNavBarItem(
-              icon: Icons.grid_view_rounded,
-              selected: false,
-            ),
-
-            _buildNavBarItem(
-              icon: Icons.history,
-              selected: false,
-            ),
-
-            const SizedBox(width: 52),
-
-            _buildNavBarItem(
-              icon: Icons.text_fields,
-              selected: false,
-            ),
-
-            _buildNavBarItem(
-              icon: Icons.account_circle_outlined,
-              selected: true,
-            ),
-          ],
-        ),
-      ),
-
-      floatingActionButton: SizedBox(
-        width: 76,
-        height: 76,
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            FloatingActionButton(
-              elevation: 0,
-              backgroundColor: secondary,
-              onPressed: () {},
-              shape: const CircleBorder(),
-              child: const Icon(
-                Icons.add,
-                size: 42,
+            buildNavBarItem(
+              const Icon(
+                Icons.home,
                 color: Colors.white,
               ),
+              0,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const HomeScreen(),
+                  ),
+                );
+              },
             ),
 
-            IgnorePointer(
-              child: Container(
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: surface,
-                    width: 4,
-                  ),
+            buildNavBarItem(
+              const Icon(
+                Icons.history_outlined,
+                color: Colors.white,
+              ),
+              1,
+            ),
+
+            const SizedBox(width: 20),
+
+            buildNavBarItem(
+              const Text(
+                'PXX',
+
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  decoration: TextDecoration.underline,
+                  decorationColor: Colors.white,
+                  decorationThickness: 2.0,
                 ),
               ),
+              3,
+            ),
+
+            buildNavBarItem(
+              const Icon(
+                Icons.account_circle_outlined,
+                color: Colors.white,
+              ),
+              4,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const PerfilScreen(),
+                  ),
+                );
+              },
             ),
           ],
         ),
       ),
+
+      floatingActionButton: _buildFloatingActionButton(context),
 
       floatingActionButtonLocation:
           FloatingActionButtonLocation.centerDocked,
     );
   }
+
+  Widget _buildFloatingActionButton(BuildContext context) {
+    return SizedBox(
+      width: 58,
+      height: 58,
+
+      child: Stack(
+        alignment: Alignment.center,
+
+        children: [
+
+          FloatingActionButton(
+            elevation: 0,
+            disabledElevation: 0,
+            focusElevation: 0,
+            hoverElevation: 0,
+            highlightElevation: 0,
+
+            backgroundColor:
+                Theme.of(context).colorScheme.secondary,
+
+            onPressed: () {},
+
+            shape: const CircleBorder(),
+
+            child: Icon(
+              Icons.add,
+              size: 24,
+
+              color:
+                  Theme.of(context).colorScheme.surface,
+            ),
+          ),
+
+          IgnorePointer(
+            child: Container(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+
+                border: Border.all(
+                  color:
+                      Theme.of(context).colorScheme.surface,
+                  width: 4.0,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
 
   Widget _buildProfileField(
     BuildContext context,
@@ -285,20 +345,24 @@ class PerfilScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildNavBarItem({
-    required IconData icon,
-    required bool selected,
+  Widget buildNavBarItem(
+    Widget icon,
+    int index, {
+    VoidCallback? onTap,
   }) {
     return Expanded(
-      child: SizedBox(
-        height: 66,
-        child: Center(
-          child: Icon(
-            icon,
-            size: 34,
-            color: selected
-                ? const Color(0xFF0371CA)
-                : Colors.white,
+      child: InkWell(
+        onTap: onTap,
+        child: Container(
+          height: 60,
+          width: 60,
+          alignment: Alignment.center,
+          child: SizedBox(
+            width: 36,
+            height: 36,
+            child: FittedBox(
+              child: icon,
+            ),
           ),
         ),
       ),

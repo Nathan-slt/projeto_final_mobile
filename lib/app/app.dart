@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:projeto_final/app/app_info.dart';
+import 'package:projeto_final/app/routes.dart';
 
-import '../features/splash/screens/splash_screen.dart';
+import 'theme.dart';
 
 class MainApp extends StatelessWidget {
   const MainApp({super.key});
@@ -10,7 +12,8 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'MedLink',
+
+      title: AppInfo.name,
 
       locale: const Locale('pt', 'BR'),
 
@@ -24,18 +27,10 @@ class MainApp extends StatelessWidget {
         GlobalCupertinoLocalizations.delegate,
       ],
 
-      theme: ThemeData(
-        fontFamily: 'Inter',
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF082849),
-          primary: const Color(0xFF082849),
-          secondary: const Color(0xFF0371CA),
-          surface: const Color(0xFFF0F7FF),
-          onSurface: const Color(0xFF082849),
-        ),
-      ),
+      theme: AppTheme.lightTheme,
 
-      home: const SplashScreen(),
+      routes: AppRoutes.routes,
+      initialRoute: AppRoutes.splash,
     );
   }
 }

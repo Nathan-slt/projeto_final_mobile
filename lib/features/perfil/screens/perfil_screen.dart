@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:projeto_final/features/home/screens/home_screen.dart';
+import 'package:projeto_final/app/routes.dart';
+
+import '../../../core/widgets/rodape.dart';
 
 class PerfilScreen extends StatelessWidget {
   const PerfilScreen({super.key});
@@ -155,73 +157,30 @@ class PerfilScreen extends StatelessWidget {
         ],
       ),
 
-      bottomNavigationBar: BottomAppBar(
-        height: 60,
-        color: Theme.of(context).colorScheme.primary,
+      bottomNavigationBar: Rodape(
+        currentIndex: 0,
 
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
+        onItemSelected: (index) {
+          switch (index) {
+            case 0:
+              Navigator.pushReplacementNamed(context, AppRoutes.home);
+              break;
 
-          children: [
-            buildNavBarItem(
-              const Icon(
-                Icons.home,
-                color: Colors.white,
-              ),
-              0,
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const HomeScreen(),
-                  ),
-                );
-              },
-            ),
+            case 1:
+  
+              break;
 
-            buildNavBarItem(
-              const Icon(
-                Icons.history_outlined,
-                color: Colors.white,
-              ),
-              1,
-            ),
+            case 3:
+              Navigator.pushReplacementNamed(context, AppRoutes.fila);
+              break;
 
-            const SizedBox(width: 20),
+            case 4:
+              Navigator.pushReplacementNamed(context, AppRoutes.perfil);
+              break;
+          }
+        }, onAddPressed: () {  
 
-            buildNavBarItem(
-              const Text(
-                'PXX',
-
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  decoration: TextDecoration.underline,
-                  decorationColor: Colors.white,
-                  decorationThickness: 2.0,
-                ),
-              ),
-              3,
-            ),
-
-            buildNavBarItem(
-              const Icon(
-                Icons.account_circle_outlined,
-                color: Colors.white,
-              ),
-              4,
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const PerfilScreen(),
-                  ),
-                );
-              },
-            ),
-          ],
-        ),
+        },
       ),
 
       floatingActionButton: _buildFloatingActionButton(context),
@@ -300,7 +259,7 @@ class PerfilScreen extends StatelessWidget {
       decoration: BoxDecoration(
         border: Border(
           bottom: BorderSide(
-            color: primary.withOpacity(0.5),
+            color: primary.withValues(alpha: 0.5),
             width: 1.2,
           ),
         ),
@@ -341,30 +300,6 @@ class PerfilScreen extends StatelessWidget {
             color: primary,
           ),
         ],
-      ),
-    );
-  }
-
-  Widget buildNavBarItem(
-    Widget icon,
-    int index, {
-    VoidCallback? onTap,
-  }) {
-    return Expanded(
-      child: InkWell(
-        onTap: onTap,
-        child: Container(
-          height: 60,
-          width: 60,
-          alignment: Alignment.center,
-          child: SizedBox(
-            width: 36,
-            height: 36,
-            child: FittedBox(
-              child: icon,
-            ),
-          ),
-        ),
       ),
     );
   }

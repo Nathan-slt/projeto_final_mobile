@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:projeto_final/app/routes.dart';
 
-class FilaScreen extends StatelessWidget {
-  const FilaScreen({super.key});
+class HistoricoScreen extends StatelessWidget {
+  const HistoricoScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +24,7 @@ class FilaScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Text(
-              'Fila de Consultas',
+              'Histórico de Consultas',
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 20),

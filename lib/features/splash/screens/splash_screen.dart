@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-
-import '../../home/screens/home_screen.dart';
+import 'package:projeto_final/app/routes.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -16,15 +15,13 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
 
-    Future.delayed(const Duration(seconds: 4), () {
+    Future.delayed(const Duration(seconds: 3), () {
 
       if (!mounted) return;
 
-      Navigator.pushReplacement(
+      Navigator.pushReplacementNamed(
         context,
-        MaterialPageRoute(
-          builder: (context) => const HomeScreen(),
-        ),
+        AppRoutes.login,
       );
 
     });
@@ -41,12 +38,14 @@ class _SplashScreenState extends State<SplashScreen> {
           children: [
             SvgPicture.asset(
               'assets/images/logo.svg',
+              width: 120,
             ),
 
             const SizedBox(height: 5),
 
             SvgPicture.asset(
               'assets/images/medlink.svg',
+              width: 180,
             ),
           ],
         ),

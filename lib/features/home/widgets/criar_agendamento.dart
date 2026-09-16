@@ -25,7 +25,9 @@ class AppFloatingActionButton extends StatelessWidget {
             backgroundColor:
                 Theme.of(context).colorScheme.secondary,
 
-            onPressed: () {},
+            onPressed: () {
+              // Fazer agendamento
+            },
 
             shape: const CircleBorder(),
 

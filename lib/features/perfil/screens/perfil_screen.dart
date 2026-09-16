@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:projeto_final/app/routes.dart';
 
 import '../../../core/widgets/rodape.dart';
 
@@ -157,86 +156,8 @@ class PerfilScreen extends StatelessWidget {
         ],
       ),
 
-      bottomNavigationBar: Rodape(
-        currentIndex: 0,
-
-        onItemSelected: (index) {
-          switch (index) {
-            case 0:
-              Navigator.pushReplacementNamed(context, AppRoutes.home);
-              break;
-
-            case 1:
-  
-              break;
-
-            case 3:
-              Navigator.pushReplacementNamed(context, AppRoutes.fila);
-              break;
-
-            case 4:
-              Navigator.pushReplacementNamed(context, AppRoutes.perfil);
-              break;
-          }
-        }, onAddPressed: () {  
-
-        },
-      ),
-
-      floatingActionButton: _buildFloatingActionButton(context),
-
-      floatingActionButtonLocation:
-          FloatingActionButtonLocation.centerDocked,
-    );
-  }
-
-  Widget _buildFloatingActionButton(BuildContext context) {
-    return SizedBox(
-      width: 58,
-      height: 58,
-
-      child: Stack(
-        alignment: Alignment.center,
-
-        children: [
-
-          FloatingActionButton(
-            elevation: 0,
-            disabledElevation: 0,
-            focusElevation: 0,
-            hoverElevation: 0,
-            highlightElevation: 0,
-
-            backgroundColor:
-                Theme.of(context).colorScheme.secondary,
-
-            onPressed: () {},
-
-            shape: const CircleBorder(),
-
-            child: Icon(
-              Icons.add,
-              size: 24,
-
-              color:
-                  Theme.of(context).colorScheme.surface,
-            ),
-          ),
-
-          IgnorePointer(
-            child: Container(
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-
-                border: Border.all(
-                  color:
-                      Theme.of(context).colorScheme.surface,
-                  width: 4.0,
-                ),
-              ),
-            ),
-          ),
-        ],
+       bottomNavigationBar: Rodape(
+        currentIndex: 4,
       ),
     );
   }

@@ -7,21 +7,75 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-   return Scaffold(
+    return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        centerTitle: true,
+        title: Padding(
+          padding: const EdgeInsets.only(top: 40),
+          child: SvgPicture.asset(
+            'assets/images/medlink_dark.svg',
+            height: 60,
+          ),
+        ), 
+      ), 
+
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SvgPicture.asset(
-              'assets/images/medlink.svg',
-              height: 100,
+
+            Text(
+              'Fazer login',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-            const SizedBox(height: 20),
+
+            const SizedBox(height: 10),
+
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: TextField(
+                decoration: InputDecoration(
+                  labelText: 'Digite seu e-mail',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 10),
+
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: TextField(
+                decoration: InputDecoration(
+                  labelText: 'Digite sua senha',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 10),
+
             ElevatedButton(
               onPressed: () {
                 Navigator.pushReplacementNamed(context, AppRoutes.home);
               },
               child: const Text('Login'),
+            ),
+            
+            const SizedBox(height: 5),
+
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pushReplacementNamed(context, AppRoutes.senha);
+              }, child: const Text('Esqueceu sua senha?'), 
             ),
           ],
         ),
@@ -29,5 +83,3 @@ class LoginScreen extends StatelessWidget {
     ); 
   }
 }
-
-      

@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:projeto_final/app/routes.dart';
 
-import '../../../core/widgets/rodape.dart';
-import '../widgets/criar_agendamento.dart';
+import '../../../core/widgets/app_bar.dart';
 import '../widgets/agendamento_card.dart';
 import '../widgets/calendario.dart';
-
+import '../widgets/criar_agendamento.dart';
+import '../../../core/widgets/rodape.dart';
+ 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
@@ -14,19 +13,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
 
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        centerTitle: true,
-    
-        title: SizedBox(
-          height: 35,
-
-          child: SvgPicture.asset(
-            'assets/images/medlink.svg',
-            fit: BoxFit.contain,
-          ),
-        ),
-      ),
+      appBar: AppBarWidget(),
 
       body: SingleChildScrollView(
         child: Padding(
@@ -49,17 +36,17 @@ class HomeScreen extends StatelessWidget {
                 ),
               ),
 
-              const SizedBox(height: 15),
+              const SizedBox(height: 10),
 
               const Text(
                 'Próxima consulta:',
 
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: 14,
                 ),
               ),
 
-              const SizedBox(height: 10),
+              const SizedBox(height: 5),
 
               const AgendamentoCard(),
 
@@ -69,33 +56,11 @@ class HomeScreen extends StatelessWidget {
         ), 
       ),
       bottomNavigationBar: Rodape(
-        currentIndex: 0,
-
-        onItemSelected: (index) {
-          switch (index) {
-            case 0:
-              Navigator.pushReplacementNamed(context, AppRoutes.home);
-              break;
-
-            case 1:
-              Navigator.pushReplacementNamed(context, AppRoutes.historico);
-              break;
-
-            case 3:
-              Navigator.pushReplacementNamed(context, AppRoutes.fila);
-              break;
-
-            case 4:
-              Navigator.pushReplacementNamed(context, AppRoutes.perfil);
-              break;
-          }
-        },
-
-        onAddPressed: () {
-          // Nova consulta/agendamento
-        },
+        currentIndex: 0, // Fazer sistema pra current index nao ser selecionado
       ),
-      floatingActionButton: const AppFloatingActionButton(),
+      floatingActionButton: AppFloatingActionButton(),
+      floatingActionButtonLocation:
+          FloatingActionButtonLocation.centerDocked,
     );
   }
-}
+}       

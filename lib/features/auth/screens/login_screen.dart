@@ -7,18 +7,27 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final primary = Theme.of(context).colorScheme.primary;
+    final secondary = Theme.of(context).colorScheme.secondary;
+    final surface = Theme.of(context).colorScheme.surface;
+
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
         centerTitle: true,
-        title: Padding(
-          padding: const EdgeInsets.only(top: 40),
-          child: SvgPicture.asset(
-            'assets/images/medlink_dark.svg',
-            height: 60,
+        toolbarHeight: 100,
+
+        title: SizedBox(
+          height: 70,
+          width: 200,
+          child: Center(
+            child: SvgPicture.asset(
+              'assets/images/medlink_dark.svg',
+              fit: BoxFit.contain,
+            ),
           ),
-        ), 
-      ), 
+        ),
+      ),
 
       body: Center(
         child: Column(
@@ -28,7 +37,7 @@ class LoginScreen extends StatelessWidget {
             Text(
               'Fazer login',
               style: TextStyle(
-                fontSize: 18,
+                fontSize: 28,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -63,20 +72,64 @@ class LoginScreen extends StatelessWidget {
 
             const SizedBox(height: 10),
 
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pushReplacementNamed(context, AppRoutes.home);
-              },
-              child: const Text('Login'),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: SizedBox(
+                width: double.infinity,
+                height: 46,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.pushReplacementNamed(context, AppRoutes.home);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: secondary,
+                    foregroundColor: Colors.white,
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                  ),
+                  child: const Text(
+                    'Login',
+                    style: TextStyle(
+                      fontSize: 20,
+                    ),
+                  ),
+                ),
+              ),
             ),
             
-            const SizedBox(height: 5),
+            const SizedBox(height: 10),
 
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pushReplacementNamed(context, AppRoutes.senha);
-              }, child: const Text('Esqueceu sua senha?'), 
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: SizedBox(
+                width: double.infinity,
+                height: 46,
+                child: OutlinedButton(
+                  onPressed: () {
+                    Navigator.pushReplacementNamed(context, AppRoutes.senha);
+                  },
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: secondary,
+                    side: BorderSide(
+                      color: secondary,
+                      width: 1,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                  ),
+                  child: const Text(
+                    'Esqueceu sua senha?',
+                    style: TextStyle(
+                      fontSize: 20,
+                    ),
+                  ),
+                ),
+              ),
             ),
+
           ],
         ),
       ),

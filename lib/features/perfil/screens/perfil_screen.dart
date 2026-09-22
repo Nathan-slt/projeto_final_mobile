@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:projeto_final/app/routes.dart';
 
 import '../../../core/widgets/rodape.dart';
 
@@ -100,7 +101,7 @@ class PerfilScreen extends StatelessWidget {
                     'kauansnts@email.com',
                   ),
 
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 10),
 
                   SizedBox(
                     width: double.infinity,
@@ -124,13 +125,15 @@ class PerfilScreen extends StatelessWidget {
                     ),
                   ),
 
-                  const SizedBox(height: 22),
+                  const SizedBox(height: 10),
 
                   SizedBox(
                     width: double.infinity,
                     height: 46,
                     child: OutlinedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.pushReplacementNamed(context, AppRoutes.login);
+                      },
                       style: OutlinedButton.styleFrom(
                         foregroundColor: secondary,
                         side: BorderSide(

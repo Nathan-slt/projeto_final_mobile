@@ -26,7 +26,7 @@ class AppRoutes {
 
   static Map<String, WidgetBuilder> get routes => {
         splash: (context) => const SplashScreen(),
-        login: (context) => const LoginScreen(),
+        login: (context) => LoginScreen(),
         senha: (context) => const SenhaScreen(),
         home: (context) => const HomeScreen(),
         historico: (context) => const HistoricoScreen(),

@@ -44,7 +44,7 @@ class _LoginScreenState extends State<LoginScreen> {
             Text(
               'Fazer login',
               style: TextStyle(
-                fontSize: 28,
+                fontSize: 24,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -186,7 +186,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: const Text(
                     'Entrar',
                     style: TextStyle(
-                      fontSize: 20,
+                      fontSize: 16,
                     ),
                   ),
                 ),
@@ -212,7 +212,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: Text(
                     'Esqueceu sua senha?',
                     style: TextStyle(
-                      fontSize: 20,
+                      fontSize: 16,
                       color: secondary,
                     ),
                   ),

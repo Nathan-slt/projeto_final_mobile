@@ -119,7 +119,7 @@ class PerfilScreen extends StatelessWidget {
                       child: const Text(
                         'Alterar Senha',
                         style: TextStyle(
-                          fontSize: 20,
+                          fontSize: 16,
                         ),
                       ),
                     ),
@@ -147,7 +147,7 @@ class PerfilScreen extends StatelessWidget {
                       child: const Text(
                         'Sair',
                         style: TextStyle(
-                          fontSize: 20,
+                          fontSize: 16,
                         ),
                       ),
                     ),

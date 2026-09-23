@@ -1,4 +1,4 @@
-  import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class Calendario extends StatefulWidget {
@@ -16,6 +16,9 @@ class _CalendarioState extends State<Calendario> {
 
   @override
   Widget build(BuildContext context) {
+    final secondary = Theme.of(context).colorScheme.secondary;
+    final primary = Theme.of(context).colorScheme.primary;
+
     return Column(
       children: [
         const SizedBox(height: 15),
@@ -93,8 +96,29 @@ class _CalendarioState extends State<Calendario> {
             titleCentered: true,
           ),
 
-          calendarStyle: const CalendarStyle(
+          calendarStyle: CalendarStyle(
             outsideDaysVisible: true,
+
+            // Dia de hoje (quando não é o selecionado) usa a secondary
+            // com menos opacidade, pra não competir com o dia selecionado.
+            todayDecoration: BoxDecoration(
+              color: secondary.withValues(alpha: 0.3),
+              shape: BoxShape.circle,
+            ),
+            todayTextStyle: TextStyle(
+              color: primary,
+              fontWeight: FontWeight.bold,
+            ),
+
+            // Dia selecionado usa a cor secondary do tema.
+            selectedDecoration: BoxDecoration(
+              color: secondary,
+              shape: BoxShape.circle,
+            ),
+            selectedTextStyle: const TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ),
       ],
@@ -109,7 +133,7 @@ class _CalendarioState extends State<Calendario> {
     required VoidCallback onTap,
     required bool left,
   }) {
-    final primary = Theme.of(context).colorScheme.primary;
+    final secondary = Theme.of(context).colorScheme.secondary;
     final surface = Theme.of(context).colorScheme.surface;
 
     return InkWell(
@@ -117,10 +141,10 @@ class _CalendarioState extends State<Calendario> {
 
       child: Container(
         decoration: BoxDecoration(
-          color: selected ? primary : surface,
+          color: selected ? secondary : surface,
 
           border: Border.all(
-            color: primary,
+            color: secondary,
             width: 1,
           ),
 
@@ -150,7 +174,7 @@ class _CalendarioState extends State<Calendario> {
             Icon(
               icon,
               size: 20,
-              color: selected ? Colors.white : primary,
+              color: selected ? Colors.white : secondary,
             ),
 
             const SizedBox(width: 8),
@@ -159,7 +183,7 @@ class _CalendarioState extends State<Calendario> {
               text,
 
               style: TextStyle(
-                color: selected ? Colors.white : primary,
+                color: selected ? Colors.white : secondary,
                 fontWeight: FontWeight.bold,
               ),
             ),

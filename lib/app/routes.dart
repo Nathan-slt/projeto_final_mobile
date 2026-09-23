@@ -3,19 +3,25 @@ import 'package:flutter/material.dart';
 import '../features/splash/screens/splash_screen.dart';
 import '../features/auth/screens/login_screen.dart';
 import 'package:projeto_final/features/auth/screens/senha_screen.dart';
+import '../features/auth/screens/cadastro_screen.dart';
 import '../features/home/screens/home_screen.dart';
 import '../features/historico/screens/historico_screen.dart';
 import '../features/fila/screens/fila_screen.dart';
 import '../features/perfil/screens/perfil_screen.dart';
+import '../features/home/screens/criar_agendamento_screen.dart';
 
 class AppRoutes {
   static const String splash = '/';
   static const String login = '/login';
   static const String senha = '/senha';
-  static const String home = '/home';
+  static const String cadastro = '/cadastro';
+  static const String home = '/home'; 
+  static const String agendamento = '/agendamento';
   static const String historico = '/historico';
   static const String fila = '/fila';
   static const String perfil = '/perfil';
+
+
 
   static const Map<int, String> bottomNavRoutes = {
     0: home,
@@ -28,9 +34,11 @@ class AppRoutes {
         splash: (context) => const SplashScreen(),
         login: (context) => LoginScreen(),
         senha: (context) => const SenhaScreen(),
+        cadastro: (context) => const CadastroScreen(),
         home: (context) => const HomeScreen(),
+        agendamento: (context) => const CriarAgendamentoScreen(),
         historico: (context) => const HistoricoScreen(),
         fila: (context) => const FilaScreen(),
-        perfil: (context) => const PerfilScreen(),
-      };
+        perfil: (context) => PerfilScreen(),
+  };
 }

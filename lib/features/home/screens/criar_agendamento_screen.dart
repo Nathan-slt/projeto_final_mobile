@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-import '../../../core/widgets/app_bar.dart';
+// import '../../../core/widgets/app_bar.dart';
 import '../widgets/agendamento_card.dart';
 import '../widgets/calendario.dart';
 import '../widgets/criar_agendamento.dart';
 import '../../../core/widgets/rodape.dart';
 
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+class CriarAgendamentoScreen extends StatelessWidget {
+  const CriarAgendamentoScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +16,7 @@ class HomeScreen extends StatelessWidget {
     final horizontalPadding = (screenWidth * 0.045).clamp(16.0, 32.0);
 
     return Scaffold(
-      appBar: AppBarWidget(),
+      // appBar: AppBarWidget(),
 
       body: SingleChildScrollView(
         child: Center(
@@ -30,14 +30,16 @@ class HomeScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Meus agendamentos',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                   
+                  // const Text(
+                  //   'Meus agendamentos',
+                  //   style: TextStyle(
+                  //     fontSize: 24,
+                  //     fontWeight: FontWeight.bold,
+                  //   ),
+                  // ),
+
+                  const SizedBox(height: 10),
+
                   const Text(
                     'Próxima consulta:',
                     style: TextStyle(

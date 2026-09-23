@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:projeto_final/app/routes.dart';
 
-class SenhaScreen extends StatelessWidget {
-  const SenhaScreen({super.key});
+class CadastroScreen extends StatelessWidget {
+  const CadastroScreen({super.key});
 
   @override
   Widget build(BuildContext context){

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:projeto_final/app/routes.dart';
 
 class AppFloatingActionButton extends StatelessWidget {
   const AppFloatingActionButton({
@@ -27,6 +28,7 @@ class AppFloatingActionButton extends StatelessWidget {
 
             onPressed: () {
               // Fazer agendamento
+              Navigator.pushNamed(context, AppRoutes.agendamento);
             },
 
             shape: const CircleBorder(),

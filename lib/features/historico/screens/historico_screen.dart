@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:projeto_final/core/widgets/app_bar.dart';
-import 'package:projeto_final/features/historico/models/consulta.dart';
-import 'package:projeto_final/features/historico/widgets/consulta_card.dart';
+import 'package:projeto_final/core/models/agendamento.dart';
+import 'package:projeto_final/features/historico/widgets/agendamento_card.dart';
 
 /// Aba "Histórico". O rodapé fica no [MainShellScreen].
 class HistoricoScreen extends StatelessWidget {
   const HistoricoScreen({super.key});
 
-  static final List<Consulta> _consultas = [
-    Consulta(
+  static final List<Agendamento> _agendamentos = [
+    Agendamento(
       medico: 'Dr. Tom Holland',
       especialidade: 'Oftalmologista',
       tipoExame: 'Exame de Vista',
@@ -18,7 +18,7 @@ class HistoricoScreen extends StatelessWidget {
       observacoes: 'Pequeno relatório da consulta',
       data: DateTime(2026, 8, 24, 14, 0),
     ),
-    Consulta(
+    Agendamento(
       medico: 'Dr. Tom Holland',
       especialidade: 'Oftalmologista',
       tipoExame: 'Exame de Vista',
@@ -27,7 +27,7 @@ class HistoricoScreen extends StatelessWidget {
           'Rua Amélia Prado, 560 - Jardim do Vale\nLorena, São Paulo - 12615-670',
       data: DateTime(2026, 8, 15, 16, 0),
     ),
-    Consulta(
+    Agendamento(
       medico: 'Dr. Tom Holland',
       especialidade: 'Oftalmologista',
       tipoExame: 'Exame de Vista',
@@ -68,10 +68,10 @@ class HistoricoScreen extends StatelessWidget {
                     horizontalPadding,
                     16,
                   ),
-                  itemCount: _consultas.length,
+                  itemCount: _agendamentos.length,
                   separatorBuilder: (_, _) => const SizedBox(height: 12),
-                  itemBuilder: (context, index) => ConsultaCard(
-                    consulta: _consultas[index],
+                  itemBuilder: (context, index) => AgendamentoCard(
+                    agendamento: _agendamentos[index],
                     onTap: () {
                       // TODO: abrir detalhes da consulta
                     },

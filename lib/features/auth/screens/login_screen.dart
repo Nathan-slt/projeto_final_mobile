@@ -17,8 +17,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     final primary = Theme.of(context).colorScheme.primary;
     final secondary = Theme.of(context).colorScheme.secondary;
-    final surface = Theme.of(context).colorScheme.surface;
-    final screenWidth = MediaQuery.of(context).size.width;
+    final screenWidth = MediaQuery.sizeOf(context).width;
     final horizontalPadding = (screenWidth * 0.045).clamp(16.0, 32.0);
 
     return Scaffold(
@@ -77,11 +76,11 @@ class _LoginScreenState extends State<LoginScreen> {
                                 decoration: InputDecoration(
                                   hintText: 'nome@exemplo.com',
                                   hintStyle: TextStyle(
-                                    fontSize: 12,
-                                    color: primary.withOpacity(0.6),
+                                    fontSize: 14,
+                                    color: primary.withValues(alpha: 0.6),
                                   ),
                                   prefixIcon: Icon(
-                                    Icons.lock_outline,
+                                    Icons.mail_outline,
                                     color: primary,
                                     size: 22,
                                   ),
@@ -127,8 +126,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                 decoration: InputDecoration(
                                   hintText: 'Digite sua senha',
                                   hintStyle: TextStyle(
-                                    fontSize: 12,
-                                    color: primary.withOpacity(0.6),
+                                    fontSize: 14,
+                                    color: primary.withValues(alpha: 0.6),
                                   ),
                                   prefixIcon: Icon(
                                     Icons.lock_outline,

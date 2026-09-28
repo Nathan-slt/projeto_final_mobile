@@ -1,23 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:projeto_final/core/widgets/app_bar.dart';
+import 'package:projeto_final/features/home/widgets/agendamento_card.dart';
+import 'package:projeto_final/features/home/widgets/calendario.dart';
 
-import '../../../core/widgets/app_bar.dart';
-import '../widgets/agendamento_card.dart';
-import '../widgets/calendario.dart';
-import '../widgets/criar_agendamento.dart';
-import '../../../core/widgets/rodape.dart';
-
+/// Aba "Início". O rodapé e o botão de criar agendamento ficam no
+/// [MainShellScreen].
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-
+    final screenWidth = MediaQuery.sizeOf(context).width;
     final horizontalPadding = (screenWidth * 0.045).clamp(16.0, 32.0);
 
     return Scaffold(
-      appBar: AppBarWidget(),
-
+      appBar: const AppBarWidget(),
       body: SingleChildScrollView(
         child: Center(
           child: ConstrainedBox(
@@ -27,41 +24,30 @@ class HomeScreen extends StatelessWidget {
                 horizontal: horizontalPadding,
                 vertical: 8.0,
               ),
-              child: Column(
+              child: const Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
+                  SizedBox(height: 5),
+                  Text(
                     'Meus agendamentos',
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                   
-                  const Text(
+                  Text(
                     'Próxima consulta:',
-                    style: TextStyle(
-                      fontSize: 14,
-                    ),
+                    style: TextStyle(fontSize: 14),
                   ),
-
-                  const SizedBox(height: 5),
-
-                  const AgendamentoCard(),
-
-                  const Calendario(),
+                  SizedBox(height: 5),
+                  AgendamentoCard(),
+                  Calendario(),
                 ],
               ),
             ),
           ),
         ),
       ),
-      bottomNavigationBar: Rodape(
-        currentIndex: 0,
-      ),
-      floatingActionButton: AppFloatingActionButton(),
-      floatingActionButtonLocation:
-          FloatingActionButtonLocation.centerDocked,
     );
   }
 }

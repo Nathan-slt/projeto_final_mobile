@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-
-import '../../../core/widgets/app_bar.dart';
-
-import 'package:projeto_final/core/widgets/rodape.dart';
-
+import 'package:projeto_final/core/widgets/app_bar.dart';
+import 'package:projeto_final/features/historico/models/consulta.dart';
 import 'package:projeto_final/features/historico/widgets/consulta_card.dart';
 
+/// Aba "Histórico". O rodapé fica no [MainShellScreen].
 class HistoricoScreen extends StatelessWidget {
   const HistoricoScreen({super.key});
 
@@ -15,7 +13,8 @@ class HistoricoScreen extends StatelessWidget {
       especialidade: 'Oftalmologista',
       tipoExame: 'Exame de Vista',
       clinica: 'Clínica Vista+',
-      endereco: 'Rua Amélia Prado, 560 - Jardim do Vale\nLorena, São Paulo - 12615-670',
+      endereco:
+          'Rua Amélia Prado, 560 - Jardim do Vale\nLorena, São Paulo - 12615-670',
       observacoes: 'Pequeno relatório da consulta',
       data: DateTime(2026, 8, 24, 14, 0),
     ),
@@ -24,7 +23,8 @@ class HistoricoScreen extends StatelessWidget {
       especialidade: 'Oftalmologista',
       tipoExame: 'Exame de Vista',
       clinica: 'Clínica Vista+',
-      endereco: 'Rua Amélia Prado, 560 - Jardim do Vale\nLorena, São Paulo - 12615-670',
+      endereco:
+          'Rua Amélia Prado, 560 - Jardim do Vale\nLorena, São Paulo - 12615-670',
       data: DateTime(2026, 8, 15, 16, 0),
     ),
     Consulta(
@@ -32,19 +32,19 @@ class HistoricoScreen extends StatelessWidget {
       especialidade: 'Oftalmologista',
       tipoExame: 'Exame de Vista',
       clinica: 'Clínica Vista+',
-      endereco: 'Rua Amélia Prado, 560 - Jardim do Vale\nLorena, São Paulo - 12615-670',
+      endereco:
+          'Rua Amélia Prado, 560 - Jardim do Vale\nLorena, São Paulo - 12615-670',
       data: DateTime(2026, 7, 27, 18, 0),
     ),
   ];
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
+    final screenWidth = MediaQuery.sizeOf(context).width;
     final horizontalPadding = (screenWidth * 0.045).clamp(16.0, 32.0);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF2F8FF),
-      appBar: AppBarWidget(),
+      appBar: const AppBarWidget(),
       body: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 600),
@@ -57,7 +57,6 @@ class HistoricoScreen extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFF0A2A52),
                   ),
                 ),
               ),
@@ -70,7 +69,7 @@ class HistoricoScreen extends StatelessWidget {
                     16,
                   ),
                   itemCount: _consultas.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: 12),
+                  separatorBuilder: (_, _) => const SizedBox(height: 12),
                   itemBuilder: (context, index) => ConsultaCard(
                     consulta: _consultas[index],
                     onTap: () {
@@ -82,9 +81,6 @@ class HistoricoScreen extends StatelessWidget {
             ],
           ),
         ),
-      ),
-      bottomNavigationBar: Rodape(
-        currentIndex: 1,
       ),
     );
   }

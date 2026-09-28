@@ -2,13 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
-  const AppBarWidget({super.key});
+  /// Mostra o botão de voltar quando a tela foi empilhada (`Navigator.push`).
+  final bool showBackButton;
+
+  const AppBarWidget({super.key, this.showBackButton = false});
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+
     return AppBar(
-      automaticallyImplyLeading: false,
-      backgroundColor: Theme.of(context).colorScheme.primary,
+      automaticallyImplyLeading: showBackButton,
+      backgroundColor: scheme.primary,
+      foregroundColor: scheme.onPrimary,
       centerTitle: true,
       title: SizedBox(
         height: 35,

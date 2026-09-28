@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:projeto_final/app/routes.dart';
 
-import '../../../core/widgets/rodape.dart';
-
+/// Aba "Perfil". O rodapé fica no [MainShellScreen].
 class PerfilScreen extends StatefulWidget {
   const PerfilScreen({super.key});
 
@@ -55,112 +54,75 @@ class _PerfilScreenState extends State<PerfilScreen> {
     }
   }
 
+  Widget _buildHeader(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final width = MediaQuery.sizeOf(context).width;
+
+    final avatarSize = (width * 0.34).clamp(96.0, 150.0);
+    final logoHeight = (width * 0.095).clamp(28.0, 42.0);
+
+    return Container(
+      width: double.infinity,
+      color: scheme.primary,
+      child: SafeArea(
+        bottom: false,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(10, 16, 10, 14),
+          child: Column(
+            children: [
+              Text(
+                'Perfil',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: scheme.inversePrimary,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 40),
+              Container(
+                width: avatarSize,
+                height: avatarSize,
+                decoration: BoxDecoration(
+                  color: scheme.surface,
+                  borderRadius: BorderRadius.circular(avatarSize * 0.28),
+                ),
+                child: Icon(
+                  Icons.person_outline,
+                  size: avatarSize * 0.77,
+                  color: scheme.primary,
+                ),
+              ),
+              const SizedBox(height: 14),
+              Align(
+                alignment: Alignment.centerRight,
+                child: SizedBox(
+                  height: logoHeight,
+                  child: SvgPicture.asset(
+                    'assets/images/medlink.svg',
+                    fit: BoxFit.contain,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final primary = Theme.of(context).colorScheme.primary;
     final secondary = Theme.of(context).colorScheme.secondary;
-    final surface = Theme.of(context).colorScheme.surface;
-
-    final screenSize = MediaQuery.of(context).size;
-    final safeTop = MediaQuery.of(context).padding.top;
-
-    // Avatar e logo calculados a partir da largura da tela (não da altura
-    // do header), pra evitar dependência circular entre os dois.
-    final avatarSize = (screenSize.width * 0.34).clamp(96.0, 150.0);
-    final avatarIconSize = avatarSize * 0.77;
-    final avatarRadius = avatarSize * 0.28;
-    final logoHeight = (screenSize.width * 0.095).clamp(28.0, 42.0);
-
-    final titleTop = safeTop + 16;
-    const tituloAlturaAproximada = 28.0; // altura do texto "Perfil" (fonte 20)
-    const tituloParaAvatarGap = 40.0;
-    const avatarParaLogoGap = 14.0;
-    const logoParaFimGap = 14.0;
-
-    final avatarTop = titleTop + tituloAlturaAproximada + tituloParaAvatarGap;
-    final avatarBottom = avatarTop + avatarSize;
-    final logoTop = avatarBottom + avatarParaLogoGap;
-
-    // Altura mínima necessária pra caber título + avatar + gap + logo,
-    // sem sobreposição. O header nunca fica menor que isso.
-    final headerHeightMinimo = logoTop + logoHeight + logoParaFimGap;
-    final headerHeightProporcional =
-        (screenSize.height * 0.24).clamp(180.0, 260.0) + safeTop;
-    final headerHeight = headerHeightMinimo > headerHeightProporcional
-        ? headerHeightMinimo
-        : headerHeightProporcional;
-
-    // Se o header ficou maior que o mínimo necessário, distribui a folga
-    // extra antes do avatar (empurrando avatar + logo pra baixo juntos),
-    // em vez de deixar o espaço sobrando só no final.
-    final folgaExtra = headerHeight - headerHeightMinimo;
-    final avatarTopFinal = avatarTop + folgaExtra / 2;
-    final logoTopFinal = logoTop + folgaExtra / 2;
 
     // Padding horizontal proporcional à largura da tela, igual à Home.
-    final horizontalPadding = (screenSize.width * 0.045).clamp(16.0, 32.0);
+    final horizontalPadding =
+        (MediaQuery.sizeOf(context).width * 0.045).clamp(16.0, 32.0);
 
     return Scaffold(
-      backgroundColor: surface,
-
       body: Column(
         children: [
-          Container(
-            height: headerHeight,
-            width: double.infinity,
-            color: primary,
-            child: Stack(
-              children: [
-                Positioned(
-                  top: titleTop,
-                  left: 0,
-                  right: 0,
-                  child: const Text(
-                    'Perfil',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Color(0xFFC4D9ED),
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-
-                Positioned(
-                  top: avatarTopFinal,
-                  left: 0,
-                  right: 0,
-                  child: Center(
-                    child: Container(
-                      width: avatarSize,
-                      height: avatarSize,
-                      decoration: BoxDecoration(
-                        color: surface,
-                        borderRadius: BorderRadius.circular(avatarRadius),
-                      ),
-                      child: Icon(
-                        Icons.person_outline,
-                        size: avatarIconSize,
-                        color: primary,
-                      ),
-                    ),
-                  ),
-                ),
-
-                Positioned(
-                  right: 10,
-                  top: logoTopFinal,
-                  child: SizedBox(
-                    height: logoHeight,
-                    child: SvgPicture.asset(
-                      'assets/images/medlink.svg',
-                      fit: BoxFit.contain,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
+          _buildHeader(context),
 
           Expanded(
             child: SingleChildScrollView(
@@ -248,8 +210,11 @@ class _PerfilScreenState extends State<PerfilScreen> {
                           height: 46,
                           child: OutlinedButton(
                             onPressed: () {
-                              Navigator.pushReplacementNamed(
-                                  context, AppRoutes.login);
+                              Navigator.pushNamedAndRemoveUntil(
+                                context,
+                                AppRoutes.login,
+                                (route) => false,
+                              );
                             },
                             style: OutlinedButton.styleFrom(
                               foregroundColor: secondary,
@@ -277,10 +242,6 @@ class _PerfilScreenState extends State<PerfilScreen> {
             ),
           ),
         ],
-      ),
-
-    bottomNavigationBar: Rodape(
-        currentIndex: 4,
       ),
     );
   }

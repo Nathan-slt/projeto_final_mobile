@@ -1,20 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:projeto_final/app/routes.dart';
 
+/// Barra de navegação inferior.
+///
+/// Não navega por conta própria: avisa a tela pai via [onTap]. Tocar na aba
+/// que já está selecionada é ignorado, então a tela atual não é recarregada.
 class Rodape extends StatelessWidget {
   final int currentIndex;
+  final ValueChanged<int> onTap;
 
   const Rodape({
     super.key,
     required this.currentIndex,
+    required this.onTap,
   });
 
-  void _navigate(BuildContext context, int index) {
-    final route = AppRoutes.bottomNavRoutes[index];
-
-    if (route != null) {
-      Navigator.pushReplacementNamed(context, route);
-    }
+  void _select(int index) {
+    if (index == currentIndex) return;
+    onTap(index);
   }
 
   @override
@@ -24,84 +26,106 @@ class Rodape extends StatelessWidget {
       color: Theme.of(context).colorScheme.primary,
       child: Row(
         children: [
-          _buildItem(
-            context: context,
+          _RodapeItem(
+            label: 'Início',
             icon: Icons.home,
-            index: 0,
+            selected: currentIndex == 0,
+            onTap: () => _select(0),
           ),
-          _buildItem(
-            context: context,
+          _RodapeItem(
+            label: 'Histórico',
             icon: Icons.history_outlined,
-            index: 1,
+            selected: currentIndex == 1,
+            onTap: () => _select(1),
           ),
+          // Espaço para o botão flutuante "Criar agendamento".
           const SizedBox(width: 20),
-          _buildItem(
-            context: context,
+          _RodapeItem(
+            label: 'Fila',
             text: 'PXX',
-            index: 3,
+            selected: currentIndex == 2,
+            onTap: () => _select(2),
           ),
-          _buildItem(
-            context: context,
+          _RodapeItem(
+            label: 'Perfil',
             icon: Icons.account_circle_outlined,
-            index: 4,
+            selected: currentIndex == 3,
+            onTap: () => _select(3),
           ),
         ],
       ),
     );
   }
+}
 
-Widget _buildItem({
-  required BuildContext context,
-  IconData? icon,
-  String? text,
-  required int index,
-}) {
-  final bool isSelected = currentIndex == index;
+class _RodapeItem extends StatelessWidget {
+  final String label;
+  final IconData? icon;
+  final String? text;
+  final bool selected;
+  final VoidCallback onTap;
 
-  return Expanded(
-    child: GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onTap: () {
-        _navigate(context, index);
-      },
-      child: SizedBox(
-        height: 60,
-        child: Center(
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 150),
-            width: 52,
-            height: 44,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: isSelected
-                  ? Colors.white.withValues(alpha: 0.15)
-                  : Colors.transparent,
-              borderRadius: BorderRadius.circular(12),
+  const _RodapeItem({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+    this.icon,
+    this.text,
+  }) : assert(icon != null || text != null);
+
+  @override
+  Widget build(BuildContext context) {
+    final onPrimary = Theme.of(context).colorScheme.onPrimary;
+
+    return Expanded(
+      child: Semantics(
+        button: true,
+        selected: selected,
+        label: label,
+        onTap: onTap,
+        excludeSemantics: true,
+        child: GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: onTap,
+          child: SizedBox(
+            height: 60,
+            child: Center(
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 150),
+                width: 52,
+                height: 44,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: selected
+                      ? onPrimary.withValues(alpha: 0.15)
+                      : Colors.transparent,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: icon != null
+                    ? Icon(
+                        icon,
+                        color: onPrimary,
+                        size: selected ? 31 : 27,
+                      )
+                    : Text(
+                        text!,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: onPrimary,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          decoration: selected
+                              ? TextDecoration.underline
+                              : TextDecoration.none,
+                          decorationColor: onPrimary,
+                          decorationThickness: 2,
+                        ),
+                      ),
+              ),
             ),
-            child: icon != null
-                ? Icon(
-                    icon,
-                    color: Colors.white,
-                    size: isSelected ? 31 : 27,
-                  )
-                : Text(
-                    text!,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      decoration: isSelected
-                          ? TextDecoration.underline
-                          : TextDecoration.none,
-                      decorationColor: Colors.white,
-                      decorationThickness: 2,
-                    ),
-                  ),
           ),
         ),
       ),
-    ),
-  );
-}
+    );
+  }
 }

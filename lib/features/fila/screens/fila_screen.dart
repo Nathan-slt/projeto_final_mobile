@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
-
-import 'package:projeto_final/core/widgets/rodape.dart';
-
 import 'package:projeto_final/core/widgets/app_bar.dart';
 
+/// Aba "Fila". O rodapé fica no [MainShellScreen].
 class FilaScreen extends StatelessWidget {
   const FilaScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
+    final screenWidth = MediaQuery.sizeOf(context).width;
     final horizontalPadding = (screenWidth * 0.045).clamp(16.0, 32.0);
 
     final boxWidth = (screenWidth * 0.65).clamp(220.0, 260.0);
@@ -18,13 +16,11 @@ class FilaScreen extends StatelessWidget {
     final titleFontSize = (screenWidth * 0.04).clamp(14.0, 16.0);
     final statusFontSize = (screenWidth * 0.035).clamp(13.0, 14.0);
 
-    const primary = Color(0xFF0A3156);
-    const background = Color(0xFFF2F8FF);
+    final scheme = Theme.of(context).colorScheme;
+    final primary = scheme.primary;
 
     return Scaffold(
-      backgroundColor: background,
-
-      appBar: AppBarWidget(),
+      appBar: const AppBarWidget(),
 
       body: Center(
         child: ConstrainedBox(
@@ -54,7 +50,7 @@ class FilaScreen extends StatelessWidget {
                                 Text(
                                   'SEU IDENTIFICADOR',
                                   style: TextStyle(
-                                    color: const Color(0xFF93CCFF),
+                                    color: scheme.inversePrimary,
                                     fontSize: titleFontSize,
                                     fontWeight: FontWeight.bold,
                                     letterSpacing: 0.5,
@@ -66,7 +62,7 @@ class FilaScreen extends StatelessWidget {
                                 Text(
                                   'PXXX',
                                   style: TextStyle(
-                                    color: Colors.white,
+                                    color: scheme.onPrimary,
                                     fontSize: mainFontSize,
                                     fontWeight: FontWeight.w500,
                                     letterSpacing: 1,
@@ -113,15 +109,15 @@ class FilaScreen extends StatelessWidget {
                                   (screenWidth * 0.025).clamp(8.0, 10.0),
                             ),
                             decoration: BoxDecoration(
-                              color: const Color(0xFFE3F7EE),
+                              color: scheme.tertiaryContainer,
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                const Icon(
+                                Icon(
                                   Icons.circle,
-                                  color: Color(0xFF18B978),
+                                  color: scheme.tertiary,
                                   size: 6,
                                 ),
 
@@ -130,7 +126,7 @@ class FilaScreen extends StatelessWidget {
                                 Text(
                                   'Atualizando em tempo real',
                                   style: TextStyle(
-                                    color: const Color(0xFF18A86F),
+                                    color: scheme.onTertiaryContainer,
                                     fontSize: statusFontSize,
                                     fontWeight: FontWeight.w600,
                                     letterSpacing: 0.3,
@@ -148,10 +144,6 @@ class FilaScreen extends StatelessWidget {
             ),
           ),
         ),
-      ),
-
-      bottomNavigationBar: const Rodape(
-        currentIndex: 3,
       ),
     );
   }

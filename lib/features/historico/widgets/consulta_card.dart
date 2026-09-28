@@ -1,29 +1,5 @@
 import 'package:flutter/material.dart';
-
-/// Modelo simples de consulta. Se preferir, mova para `core/models/consulta.dart`.
-class Consulta {
-  final String medico;
-  final String especialidade;
-  final String tipoExame;
-  final String tipoLocal; // ex.: "Consultório"
-  final String clinica;
-  final String endereco;
-  final String observacoes;
-  final DateTime data;
-  final String? fotoUrl;
-
-  const Consulta({
-    required this.medico,
-    required this.especialidade,
-    required this.tipoExame,
-    required this.clinica,
-    required this.endereco,
-    required this.data,
-    this.tipoLocal = 'Consultório',
-    this.observacoes = '-',
-    this.fotoUrl,
-  });
-}
+import 'package:projeto_final/features/historico/models/consulta.dart';
 
 class ConsultaCard extends StatelessWidget {
   final Consulta consulta;
@@ -31,9 +7,6 @@ class ConsultaCard extends StatelessWidget {
 
   const ConsultaCard({super.key, required this.consulta, this.onTap});
 
-  static const _azulEscuro = Color(0xFF0A2A52);
-  static const _azulMedio = Color(0xFF0B6FC9);
-  static const _fundoCard = Color(0xFFC3D3E3);
   static const _meses = [
     'JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN',
     'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ',
@@ -47,8 +20,10 @@ class ConsultaCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+
     return Material(
-      color: _fundoCard,
+      color: scheme.primaryContainer,
       borderRadius: BorderRadius.circular(12),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
@@ -57,9 +32,12 @@ class ConsultaCard extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Expanded(child: _buildInfo()),
-              Container(width: 2, color: Colors.white.withOpacity(0.6)),
-              SizedBox(width: 100, child: _buildData()),
+              Expanded(child: _buildInfo(scheme)),
+              Container(
+                width: 2,
+                color: scheme.onPrimary.withValues(alpha: 0.6),
+              ),
+              SizedBox(width: 100, child: _buildData(scheme)),
             ],
           ),
         ),
@@ -67,7 +45,9 @@ class ConsultaCard extends StatelessWidget {
     );
   }
 
-  Widget _buildInfo() {
+  Widget _buildInfo(ColorScheme scheme) {
+    final cor = scheme.onPrimaryContainer;
+
     return Padding(
       padding: const EdgeInsets.all(8),
       child: Column(
@@ -78,7 +58,7 @@ class ConsultaCard extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: 22,
-                backgroundColor: Colors.white,
+                backgroundColor: scheme.onPrimary,
                 backgroundImage: consulta.fotoUrl != null
                     ? NetworkImage(consulta.fotoUrl!)
                     : null,
@@ -95,10 +75,10 @@ class ConsultaCard extends StatelessWidget {
                       consulta.medico,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 17,
                         fontWeight: FontWeight.bold,
-                        color: _azulEscuro,
+                        color: cor,
                       ),
                     ),
                     Row(
@@ -110,18 +90,16 @@ class ConsultaCard extends StatelessWidget {
                             children: [
                               Text(
                                 consulta.especialidade,
-                                style: const TextStyle(
-                                    fontSize: 10, color: _azulEscuro),
+                                style: TextStyle(fontSize: 12, color: cor),
                               ),
                               Text(
                                 consulta.tipoExame,
-                                style: const TextStyle(
-                                    fontSize: 10, color: _azulEscuro),
+                                style: TextStyle(fontSize: 12, color: cor),
                               ),
                             ],
                           ),
                         ),
-                        _buildChip(),
+                        _buildChip(scheme),
                       ],
                     ),
                   ],
@@ -132,75 +110,77 @@ class ConsultaCard extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             consulta.clinica,
-            style: const TextStyle(
-              fontSize: 13,
+            style: TextStyle(
+              fontSize: 14,
               fontWeight: FontWeight.w600,
-              color: _azulEscuro,
+              color: cor,
             ),
           ),
           Text(
             consulta.endereco,
-            style: const TextStyle(fontSize: 10, color: _azulEscuro),
+            style: TextStyle(fontSize: 12, color: cor),
           ),
           const SizedBox(height: 6),
-          const Text(
+          Text(
             'Observações',
             style: TextStyle(
-              fontSize: 12,
+              fontSize: 13,
               fontWeight: FontWeight.w600,
-              color: _azulEscuro,
+              color: cor,
             ),
           ),
           Text(
             consulta.observacoes,
-            style: const TextStyle(fontSize: 10, color: _azulEscuro),
+            style: TextStyle(fontSize: 12, color: cor),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildChip() {
+  Widget _buildChip(ColorScheme scheme) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.7),
+        color: scheme.onPrimary.withValues(alpha: 0.7),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Text(
         consulta.tipoLocal,
-        style: const TextStyle(fontSize: 8, color: _azulMedio),
+        style: TextStyle(fontSize: 11, color: scheme.secondary),
       ),
     );
   }
 
-  Widget _buildData() {
+  Widget _buildData(ColorScheme scheme) {
+    final cor = scheme.onPrimaryContainer;
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
           consulta.data.day.toString().padLeft(2, '0'),
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 30,
             fontWeight: FontWeight.bold,
-            color: _azulEscuro,
+            color: cor,
           ),
         ),
         Text(
           _meses[consulta.data.month - 1],
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w600,
-            color: _azulEscuro,
+            color: cor,
           ),
         ),
         const SizedBox(height: 14),
         Text(
           _hora,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w600,
-            color: _azulEscuro,
+            color: cor,
           ),
         ),
       ],

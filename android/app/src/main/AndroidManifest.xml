@@ -4,7 +4,10 @@
     <application
         android:label="MedLink"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+        android:usesCleartextTraffic="true">
+        <!-- usesCleartextTraffic: necessário enquanto a API responder em
+             http://. Remover quando o servidor passar a usar HTTPS. -->
         <activity
             android:name=".MainActivity"
             android:exported="true"

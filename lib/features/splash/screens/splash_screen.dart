@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:projeto_final/app/routes.dart';
+import 'package:projeto_final/services/auth_service.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -15,8 +16,6 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   static const _duracao = Duration(seconds: 3);
 
-  Timer? _timer;
-
   @override
   void initState() {
     super.initState();
@@ -27,16 +26,20 @@ class _SplashScreenState extends State<SplashScreen> {
       FlutterNativeSplash.remove();
     });
 
-    _timer = Timer(_duracao, () {
-      if (!mounted) return;
-      Navigator.pushReplacementNamed(context, AppRoutes.login);
-    });
+    _iniciar();
   }
 
-  @override
-  void dispose() {
-    _timer?.cancel();
-    super.dispose();
+  Future<void> _iniciar() async {
+    // Verifica a sessão salva enquanto a animação do splash roda.
+    final restauracao = AuthService.instance.restaurarSessao();
+    await Future<void>.delayed(_duracao);
+    final logado = await restauracao;
+
+    if (!mounted) return;
+    Navigator.pushReplacementNamed(
+      context,
+      logado ? AppRoutes.home : AppRoutes.login,
+    );
   }
 
   @override

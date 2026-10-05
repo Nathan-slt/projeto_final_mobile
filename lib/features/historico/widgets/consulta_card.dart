@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:projeto_final/core/models/agendamento.dart';
+import 'package:projeto_final/features/historico/models/consulta.dart';
 
-class AgendamentoCard extends StatelessWidget {
-  final Agendamento agendamento;
+class ConsultaCard extends StatelessWidget {
+  final Consulta consulta;
   final VoidCallback? onTap;
 
-  const AgendamentoCard({super.key, required this.agendamento, this.onTap});
+  const ConsultaCard({super.key, required this.consulta, this.onTap});
 
   static const _meses = [
     'JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN',
@@ -13,8 +13,8 @@ class AgendamentoCard extends StatelessWidget {
   ];
 
   String get _hora {
-    final h = agendamento.data.hour.toString().padLeft(2, '0');
-    final m = agendamento.data.minute.toString().padLeft(2, '0');
+    final h = consulta.data.hour.toString().padLeft(2, '0');
+    final m = consulta.data.minute.toString().padLeft(2, '0');
     return '$h:${m}h';
   }
 
@@ -59,10 +59,10 @@ class AgendamentoCard extends StatelessWidget {
               CircleAvatar(
                 radius: 22,
                 backgroundColor: scheme.onPrimary,
-                backgroundImage: agendamento.fotoUrl != null
-                    ? NetworkImage(agendamento.fotoUrl!)
+                backgroundImage: consulta.fotoUrl != null
+                    ? NetworkImage(consulta.fotoUrl!)
                     : null,
-                child: agendamento.fotoUrl == null
+                child: consulta.fotoUrl == null
                     ? const Icon(Icons.person, color: Colors.grey)
                     : null,
               ),
@@ -72,7 +72,7 @@ class AgendamentoCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      agendamento.medico,
+                      consulta.medico,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
@@ -89,11 +89,11 @@ class AgendamentoCard extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                agendamento.especialidade,
+                                consulta.especialidade,
                                 style: TextStyle(fontSize: 12, color: cor),
                               ),
                               Text(
-                                agendamento.tipoExame,
+                                consulta.tipoExame,
                                 style: TextStyle(fontSize: 12, color: cor),
                               ),
                             ],
@@ -109,7 +109,7 @@ class AgendamentoCard extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            agendamento.clinica,
+            consulta.clinica,
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w600,
@@ -117,7 +117,7 @@ class AgendamentoCard extends StatelessWidget {
             ),
           ),
           Text(
-            agendamento.endereco,
+            consulta.endereco,
             style: TextStyle(fontSize: 12, color: cor),
           ),
           const SizedBox(height: 6),
@@ -130,7 +130,7 @@ class AgendamentoCard extends StatelessWidget {
             ),
           ),
           Text(
-            agendamento.observacoes,
+            consulta.observacoes,
             style: TextStyle(fontSize: 12, color: cor),
           ),
         ],
@@ -146,7 +146,7 @@ class AgendamentoCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(10),
       ),
       child: Text(
-        agendamento.tipoLocal,
+        consulta.tipoLocal,
         style: TextStyle(fontSize: 11, color: scheme.secondary),
       ),
     );
@@ -159,7 +159,7 @@ class AgendamentoCard extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
-          agendamento.data.day.toString().padLeft(2, '0'),
+          consulta.data.day.toString().padLeft(2, '0'),
           style: TextStyle(
             fontSize: 30,
             fontWeight: FontWeight.bold,
@@ -167,7 +167,7 @@ class AgendamentoCard extends StatelessWidget {
           ),
         ),
         Text(
-          _meses[agendamento.data.month - 1],
+          _meses[consulta.data.month - 1],
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w600,

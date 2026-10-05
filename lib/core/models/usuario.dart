@@ -48,7 +48,7 @@ class Usuario {
       nome: json['nome'] as String,
       email: json['email'] as String,
       papel: PapelUsuario.fromJson(json['papel'] as String),
-      ativo: json['ativo'] as bool? ?? true,
+      ativo: json['ativo'] == null ? true : (json['ativo'] == true || json['ativo'] == 1),
       idClinica: json['id_clinica'] as int?,
     );
   }

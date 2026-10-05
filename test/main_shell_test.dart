@@ -2,9 +2,31 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:projeto_final/app/theme.dart';
+import 'package:projeto_final/core/models/perfil.dart';
+import 'package:projeto_final/core/models/usuario.dart';
 import 'package:projeto_final/features/shell/screens/main_shell_screen.dart';
+import 'package:projeto_final/services/perfil_service.dart';
+
+/// A aba Perfil busca os dados na API; nos testes usamos dados fixos.
+class _PerfilServiceFake extends PerfilService {
+  @override
+  Future<Perfil> buscarPerfil() async => const Perfil(
+        usuario: Usuario(
+          idUsuario: 1,
+          nome: 'Kauan Santos',
+          email: 'kauansnts@email.com',
+          papel: PapelUsuario.paciente,
+        ),
+        telefone: '(12)99775-6565',
+      );
+}
 
 void main() {
+  final perfilOriginal = PerfilService.instance;
+
+  setUp(() => PerfilService.instance = _PerfilServiceFake());
+  tearDown(() => PerfilService.instance = perfilOriginal);
+
   Widget app() {
     return MaterialApp(
       theme: AppTheme.lightTheme,
@@ -55,7 +77,7 @@ void main() {
     await tester.pumpWidget(app());
     await tester.pumpAndSettle();
 
-    // Perfil: entra em modo de edição do primeiro campo (vira ícone de "check").
+    // Perfil: entra em modo de edição do telefone (vira ícone de "check").
     await tester.tap(find.byIcon(Icons.account_circle_outlined));
     await tester.pumpAndSettle();
     await tester.tap(find.byIcon(Icons.edit).first);

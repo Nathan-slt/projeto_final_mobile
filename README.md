@@ -1,3 +1,24 @@
-# projeto_final
+# MedLink (app do paciente)
 
-A new Flutter project.
+Sistema de gerenciamento de agendamentos e filas em clínicas.
+
+## Rodando
+
+```
+flutter pub get
+flutter run
+```
+
+A URL da API fica em `lib/core/config/api_config.dart` e pode ser trocada sem
+editar código:
+
+```
+flutter run --dart-define=API_URL=http://10.0.2.2:3000/api   # emulador Android -> backend local
+```
+
+## Estrutura de rede/sessão
+
+- `core/network/api_client.dart` — cliente HTTP único (token, erros, timeout).
+- `services/auth_service.dart` — login, logout e restauração da sessão.
+- `services/perfil_service.dart` — dados do perfil e troca de senha.
+- Se a API responder 401, o app encerra a sessão e volta ao login.

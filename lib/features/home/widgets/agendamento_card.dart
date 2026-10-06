@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:projeto_final/core/models/agendamento_detalhado.dart';
+import 'package:projeto_final/core/utils/datas.dart';
 
+/// Cartão de uma consulta (médico, clínica, hora e dia).
 class AgendamentoCard extends StatelessWidget {
-  const AgendamentoCard({super.key});
+  final AgendamentoDetalhado consulta;
+
+  const AgendamentoCard({super.key, required this.consulta});
 
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     final onPrimary = scheme.onPrimary;
+    final data = consulta.data;
 
     return Container(
       width: double.infinity,
@@ -44,26 +50,27 @@ class AgendamentoCard extends StatelessWidget {
                   TextSpan(
                     children: [
                       TextSpan(
-                        text: 'Dr. Tom Holland',
+                        text: consulta.medico,
                         style: TextStyle(
                           color: onPrimary,
                           fontSize: 17,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      TextSpan(
-                        text: ' - Oftalmologista',
-                        style: TextStyle(
-                          color: onPrimary,
-                          fontSize: 15,
+                      if (consulta.especialidade.isNotEmpty)
+                        TextSpan(
+                          text: ' - ${consulta.especialidade}',
+                          style: TextStyle(
+                            color: onPrimary,
+                            fontSize: 15,
+                          ),
                         ),
-                      ),
                     ],
                   ),
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Clínica Vista+',
+                  consulta.clinica,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
@@ -86,7 +93,7 @@ class AgendamentoCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '14:00h',
+                formatarHora(data),
                 style: TextStyle(
                   color: onPrimary,
                   fontSize: 21,
@@ -95,7 +102,7 @@ class AgendamentoCard extends StatelessWidget {
               ),
               const SizedBox(height: 6),
               Text(
-                '23 AGO',
+                '${data.day} ${abreviacaoMes(data.month)}',
                 style: TextStyle(
                   color: onPrimary,
                   fontSize: 16,

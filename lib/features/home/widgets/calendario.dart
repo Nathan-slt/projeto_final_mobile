@@ -1,8 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:projeto_final/core/models/agendamento.dart';
+import 'package:projeto_final/core/models/agendamento_detalhado.dart';
+import 'package:projeto_final/core/utils/mascaras.dart';
+import 'package:projeto_final/features/home/widgets/agendamento_card.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class Calendario extends StatefulWidget {
-  const Calendario({super.key});
+  /// Consultas do paciente. Os dias que têm consulta ficam marcados e, ao
+  /// selecionar um dia, as consultas dele aparecem abaixo do calendário.
+  final List<AgendamentoDetalhado> agendamentos;
+
+  const Calendario({super.key, this.agendamentos = const []});
 
   @override
   State<Calendario> createState() => _CalendarioState();
@@ -14,8 +22,17 @@ class _CalendarioState extends State<Calendario> {
 
   CalendarFormat _calendarFormat = CalendarFormat.month;
 
+  /// Consultas de um dia (sem as canceladas), em ordem de horário.
+  List<AgendamentoDetalhado> _doDia(DateTime dia) {
+    return widget.agendamentos
+        .where((c) => c.status != StatusAgendamento.cancelado)
+        .where((c) => isSameDay(c.data, dia))
+        .toList();
+  }
+
   @override
   Widget build(BuildContext context) {
+    final consultasDoDia = _doDia(_selectedDate);
     final secondary = Theme.of(context).colorScheme.secondary;
     final primary = Theme.of(context).colorScheme.primary;
 
@@ -89,6 +106,9 @@ class _CalendarioState extends State<Calendario> {
             _focusedDate = focusedDay;
           },
 
+          // Bolinha nos dias que têm consulta.
+          eventLoader: _doDia,
+
           startingDayOfWeek: StartingDayOfWeek.monday,
 
           headerStyle: const HeaderStyle(
@@ -110,6 +130,13 @@ class _CalendarioState extends State<Calendario> {
               fontWeight: FontWeight.bold,
             ),
 
+            markersMaxCount: 1,
+            markerSize: 6,
+            markerDecoration: BoxDecoration(
+              color: primary,
+              shape: BoxShape.circle,
+            ),
+
             // Dia selecionado usa a cor secondary do tema.
             selectedDecoration: BoxDecoration(
               color: secondary,
@@ -121,6 +148,36 @@ class _CalendarioState extends State<Calendario> {
             ),
           ),
         ),
+
+        // CONSULTAS DO DIA SELECIONADO
+        const SizedBox(height: 16),
+        Align(
+          alignment: Alignment.centerLeft,
+          child: Text(
+            'Consultas em ${formatarData(_selectedDate)}',
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        const SizedBox(height: 8),
+        if (consultasDoDia.isEmpty)
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              'Nenhuma consulta neste dia.',
+              style: TextStyle(
+                fontSize: 14,
+                color: primary.withValues(alpha: 0.7),
+              ),
+            ),
+          )
+        else
+          for (final consulta in consultasDoDia) ...[
+            AgendamentoCard(consulta: consulta),
+            const SizedBox(height: 8),
+          ],
       ],
     );
   }

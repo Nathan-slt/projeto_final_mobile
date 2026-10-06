@@ -99,7 +99,7 @@ class ConsultaCard extends StatelessWidget {
                             ],
                           ),
                         ),
-                        _buildChip(scheme),
+                        if (consulta.tipoLocal.isNotEmpty) _buildChip(scheme),
                       ],
                     ),
                   ],
@@ -118,19 +118,6 @@ class ConsultaCard extends StatelessWidget {
           ),
           Text(
             consulta.endereco,
-            style: TextStyle(fontSize: 12, color: cor),
-          ),
-          const SizedBox(height: 6),
-          Text(
-            'Observações',
-            style: TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
-              color: cor,
-            ),
-          ),
-          Text(
-            consulta.observacoes,
             style: TextStyle(fontSize: 12, color: cor),
           ),
         ],

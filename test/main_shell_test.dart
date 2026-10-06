@@ -9,6 +9,8 @@ import 'package:projeto_final/services/perfil_service.dart';
 
 /// A aba Perfil busca os dados na API; nos testes usamos dados fixos.
 class _PerfilServiceFake extends PerfilService {
+  final atualizacoes = <String, String>{};
+
   @override
   Future<Perfil> buscarPerfil() async => const Perfil(
         usuario: Usuario(
@@ -19,12 +21,26 @@ class _PerfilServiceFake extends PerfilService {
         ),
         telefone: '(12)99775-6565',
       );
+
+  @override
+  Future<void> atualizarDadosUsuario(
+    int idUsuario, {
+    String? nome,
+    String? email,
+  }) async {
+    if (nome != null) atualizacoes['nome'] = nome;
+    if (email != null) atualizacoes['email'] = email;
+  }
 }
 
 void main() {
   final perfilOriginal = PerfilService.instance;
+  late _PerfilServiceFake perfilFake;
 
-  setUp(() => PerfilService.instance = _PerfilServiceFake());
+  setUp(() {
+    perfilFake = _PerfilServiceFake();
+    PerfilService.instance = perfilFake;
+  });
   tearDown(() => PerfilService.instance = perfilOriginal);
 
   Widget app() {
@@ -80,6 +96,7 @@ void main() {
     // Perfil: entra em modo de edição do telefone (vira ícone de "check").
     await tester.tap(find.byIcon(Icons.account_circle_outlined));
     await tester.pumpAndSettle();
+    expect(find.text('(12)99775-6565'), findsOneWidget);
     await tester.tap(find.byIcon(Icons.edit).first);
     await tester.pumpAndSettle();
     expect(find.byIcon(Icons.check), findsOneWidget);
@@ -95,5 +112,30 @@ void main() {
     await tester.tap(find.byIcon(Icons.account_circle_outlined));
     await tester.pumpAndSettle();
     expect(find.byIcon(Icons.check), findsOneWidget);
+  });
+
+  testWidgets('edita e salva nome e e-mail no mesmo padrão do telefone',
+      (tester) async {
+    telaDeCelular(tester);
+    await tester.pumpWidget(app());
+    await tester.pumpAndSettle();
+    await tester.tap(find.byIcon(Icons.account_circle_outlined));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byIcon(Icons.edit).first);
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byType(TextField), 'Kauan Silva');
+    await tester.tap(find.byIcon(Icons.check));
+    await tester.pumpAndSettle();
+    expect(find.text('Kauan Silva'), findsOneWidget);
+    expect(perfilFake.atualizacoes['nome'], 'Kauan Silva');
+
+    await tester.tap(find.byIcon(Icons.edit).last);
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byType(TextField), 'kauan@example.com');
+    await tester.tap(find.byIcon(Icons.check));
+    await tester.pumpAndSettle();
+    expect(find.text('kauan@example.com'), findsOneWidget);
+    expect(perfilFake.atualizacoes['email'], 'kauan@example.com');
   });
 }

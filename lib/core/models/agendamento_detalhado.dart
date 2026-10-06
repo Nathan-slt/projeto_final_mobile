@@ -5,6 +5,8 @@ import 'package:projeto_final/core/models/agendamento.dart';
 /// A API devolve o agendamento só com IDs (profissional, clínica); o
 /// `AgendamentoService` junta com as listas de profissionais e clínicas.
 class AgendamentoDetalhado {
+  static const Duration _ajusteFusoApi = Duration(hours: 3);
+
   final Agendamento agendamento;
   final String medico;
   final String especialidade;
@@ -20,7 +22,7 @@ class AgendamentoDetalhado {
   });
 
   /// Data e hora da consulta, no fuso do aparelho.
-  DateTime get data => agendamento.dataHoraConsulta;
+  DateTime get data => agendamento.dataHoraConsulta.add(_ajusteFusoApi);
 
   StatusAgendamento get status => agendamento.status;
 

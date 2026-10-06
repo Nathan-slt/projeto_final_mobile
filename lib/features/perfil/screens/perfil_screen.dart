@@ -3,6 +3,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:projeto_final/app/routes.dart';
 import 'package:projeto_final/core/models/perfil.dart';
 import 'package:projeto_final/core/network/api_exception.dart';
+import 'package:projeto_final/core/utils/mascaras.dart';
+import 'package:projeto_final/core/utils/validadores.dart';
 import 'package:projeto_final/features/perfil/widgets/alterar_senha_dialog.dart';
 import 'package:projeto_final/services/auth_service.dart';
 import 'package:projeto_final/services/perfil_service.dart';
@@ -19,17 +21,25 @@ class _PerfilScreenState extends State<PerfilScreen> {
   final _nomeController = TextEditingController();
   final _telefoneController = TextEditingController();
   final _emailController = TextEditingController();
+  final _nomeFocus = FocusNode();
   final _telefoneFocus = FocusNode();
+  final _emailFocus = FocusNode();
 
   Perfil? _perfil;
   bool _carregando = true;
   String? _erroCarga;
 
+  bool _editandoNome = false;
+  bool _salvandoNome = false;
   bool _editandoTelefone = false;
   bool _salvandoTelefone = false;
+  bool _editandoEmail = false;
+  bool _salvandoEmail = false;
 
+  String _nomeSalvo = '';
   /// Último telefone confirmado (para detectar se houve mudança).
   String _telefoneSalvo = '';
+  String _emailSalvo = '';
 
   @override
   void initState() {
@@ -42,7 +52,9 @@ class _PerfilScreenState extends State<PerfilScreen> {
     _nomeController.dispose();
     _telefoneController.dispose();
     _emailController.dispose();
+    _nomeFocus.dispose();
     _telefoneFocus.dispose();
+    _emailFocus.dispose();
     super.dispose();
   }
 
@@ -57,9 +69,11 @@ class _PerfilScreenState extends State<PerfilScreen> {
       if (!mounted) return;
       setState(() {
         _perfil = perfil;
+        _nomeSalvo = perfil.usuario.nome;
         _nomeController.text = perfil.usuario.nome;
+        _emailSalvo = perfil.usuario.email;
         _emailController.text = perfil.usuario.email;
-        _telefoneSalvo = perfil.telefone ?? '';
+        _telefoneSalvo = formatarTelefone(perfil.telefone ?? '');
         _telefoneController.text = _telefoneSalvo;
         _carregando = false;
       });
@@ -76,6 +90,116 @@ class _PerfilScreenState extends State<PerfilScreen> {
     ScaffoldMessenger.of(context)
       ..clearSnackBars()
       ..showSnackBar(SnackBar(content: Text(mensagem)));
+  }
+
+  Future<void> _alternarEdicaoCampo({
+    required bool editando,
+    required bool salvando,
+    required FocusNode focusNode,
+    required VoidCallback iniciarEdicao,
+    required Future<void> Function() salvar,
+  }) async {
+    if (salvando) return;
+
+    if (!editando) {
+      iniciarEdicao();
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) focusNode.requestFocus();
+      });
+      return;
+    }
+
+    await salvar();
+  }
+
+  Future<void> _alternarEdicaoNome() => _alternarEdicaoCampo(
+        editando: _editandoNome,
+        salvando: _salvandoNome,
+        focusNode: _nomeFocus,
+        iniciarEdicao: () => setState(() => _editandoNome = true),
+        salvar: _salvarNome,
+      );
+
+  Future<void> _alternarEdicaoEmail() => _alternarEdicaoCampo(
+        editando: _editandoEmail,
+        salvando: _salvandoEmail,
+        focusNode: _emailFocus,
+        iniciarEdicao: () => setState(() => _editandoEmail = true),
+        salvar: _salvarEmail,
+      );
+
+  Future<void> _salvarNome() async {
+    final perfil = _perfil;
+    if (perfil == null) return;
+
+    final novo = _nomeController.text.trim();
+    if (novo.isEmpty) {
+      _mostrarMensagem('Informe seu nome.');
+      return;
+    }
+    if (novo == _nomeSalvo) {
+      setState(() => _editandoNome = false);
+      _nomeFocus.unfocus();
+      return;
+    }
+
+    setState(() => _salvandoNome = true);
+    try {
+      await PerfilService.instance.atualizarDadosUsuario(
+        perfil.usuario.idUsuario,
+        nome: novo,
+      );
+      if (!mounted) return;
+      setState(() {
+        _nomeSalvo = novo;
+        _nomeController.text = novo;
+        _editandoNome = false;
+        _salvandoNome = false;
+      });
+      _nomeFocus.unfocus();
+      _mostrarMensagem('Nome atualizado.');
+    } on ApiException catch (e) {
+      if (!mounted) return;
+      setState(() => _salvandoNome = false);
+      _mostrarMensagem(e.mensagem);
+    }
+  }
+
+  Future<void> _salvarEmail() async {
+    final perfil = _perfil;
+    if (perfil == null) return;
+
+    final novo = _emailController.text.trim();
+    if (!emailValido(novo)) {
+      _mostrarMensagem('Informe um e-mail válido.');
+      return;
+    }
+    if (novo == _emailSalvo) {
+      setState(() => _editandoEmail = false);
+      _emailFocus.unfocus();
+      return;
+    }
+
+    setState(() => _salvandoEmail = true);
+    try {
+      await PerfilService.instance.atualizarDadosUsuario(
+        perfil.usuario.idUsuario,
+        email: novo,
+      );
+      if (!mounted) return;
+      setState(() {
+        _emailSalvo = novo;
+        _emailController.text = novo;
+        _editandoEmail = false;
+        _salvandoEmail = false;
+      });
+      _emailFocus.unfocus();
+      _mostrarMensagem('E-mail atualizado.');
+    } on ApiException catch (e) {
+      if (!mounted) return;
+      setState(() => _salvandoEmail = false);
+      _mostrarMensagem(e.mensagem);
+    }
   }
 
   Future<void> _alternarEdicaoTelefone() async {
@@ -282,12 +406,14 @@ class _PerfilScreenState extends State<PerfilScreen> {
                     ),
                   ),
                 ] else ...[
-                  // Nome e e-mail só leitura por enquanto: o backend só deixa
-                  // administradores editarem esses dados (PATCH /usuarios/:id).
                   _buildProfileField(
                     context,
                     'Nome',
                     _nomeController,
+                    focusNode: _nomeFocus,
+                    isEditing: _editandoNome,
+                    salvando: _salvandoNome,
+                    onToggleEdit: _alternarEdicaoNome,
                   ),
                   _buildProfileField(
                     context,
@@ -304,6 +430,11 @@ class _PerfilScreenState extends State<PerfilScreen> {
                     context,
                     'Email',
                     _emailController,
+                    focusNode: _emailFocus,
+                    isEditing: _editandoEmail,
+                    salvando: _salvandoEmail,
+                    keyboardType: TextInputType.emailAddress,
+                    onToggleEdit: _alternarEdicaoEmail,
                   ),
                   const SizedBox(height: 10),
                   SizedBox(

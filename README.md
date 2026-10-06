@@ -9,8 +9,8 @@ flutter pub get
 flutter run
 ```
 
-A URL da API fica em `lib/core/config/api_config.dart` e pode ser trocada sem
-editar código:
+A URL padrão usa HTTPS e também é usada pelo perfil `Flutter Web` em Run and
+Debug. Para apontar para outra API, passe `API_URL` ao executar:
 
 ```
 flutter run --dart-define=API_URL=http://10.0.2.2:3000/api   # emulador Android -> backend local

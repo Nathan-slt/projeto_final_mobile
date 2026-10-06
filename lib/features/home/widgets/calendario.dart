@@ -111,6 +111,8 @@ class _CalendarioState extends State<Calendario> {
 
           startingDayOfWeek: StartingDayOfWeek.monday,
 
+          daysOfWeekHeight: 24,
+
           headerStyle: const HeaderStyle(
             formatButtonVisible: false,
             titleCentered: true,

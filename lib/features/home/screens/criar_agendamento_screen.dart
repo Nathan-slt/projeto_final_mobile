@@ -1,22 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:projeto_final/app/navigation.dart';
+import 'package:projeto_final/core/models/clinica.dart';
+import 'package:projeto_final/core/models/especialidade.dart';
+import 'package:projeto_final/core/models/horario_disponivel.dart';
+import 'package:projeto_final/core/models/profissional.dart';
+import 'package:projeto_final/core/network/api_exception.dart';
 import 'package:projeto_final/core/widgets/app_bar.dart';
-
-// TODO: substituir estes dados de exemplo pelos da API (ApiService).
-const Map<String, List<String>> _profissionaisPorEspecialidade = {
-  'Cardiologia': ['Dr. Carlos Lima', 'Dra. Marina Alves'],
-  'Clínico geral': ['Dra. Paula Ferreira', 'Dr. Ricardo Gomes'],
-  'Dermatologia': ['Dra. Beatriz Costa'],
-  'Oftalmologia': ['Dr. Tom Holland'],
-  'Ortopedia': ['Dr. André Martins', 'Dra. Juliana Rocha'],
-};
-
-// TODO: os horários livres devem vir da API, conforme profissional e data.
-final List<String> _horarios = [
-  for (var h = 8; h < 18; h++)
-    if (h != 12) // intervalo de almoço
-      for (final m in [0, 30])
-        '${h.toString().padLeft(2, '0')}:${m.toString().padLeft(2, '0')}',
-];
+import 'package:projeto_final/services/agendamento_service.dart';
 
 String _formatarData(DateTime d) {
   final dia = d.day.toString().padLeft(2, '0');
@@ -41,15 +31,180 @@ class _CriarAgendamentoScreenState extends State<CriarAgendamentoScreen> {
   // de agendar, para não mostrar erros num formulário ainda vazio.
   AutovalidateMode _autovalidate = AutovalidateMode.disabled;
 
-  String? _especialidade;
-  String? _profissional;
+  int? _idEspecialidade;
+  int? _idProfissional;
+  int? _idClinica;
   DateTime? _data;
-  String? _horario;
+  HorarioDisponivel? _horarioSelecionado;
+  List<Clinica> _clinicas = const [];
+  List<Especialidade> _especialidades = const [];
+  List<Profissional> _profissionais = const [];
+  List<HorarioDisponivel> _horarios = const [];
+  bool _carregandoClinicas = true;
+  bool _carregandoEspecialidades = true;
+  bool _carregandoProfissionais = false;
+  bool _carregandoHorarios = false;
+  bool _enviando = false;
+  String? _erroClinicas;
+  String? _erroEspecialidades;
+  String? _erroProfissionais;
+  String? _erroHorarios;
+
+  @override
+  void initState() {
+    super.initState();
+    _carregarClinicas();
+    _carregarEspecialidades();
+  }
 
   @override
   void dispose() {
     _dataController.dispose();
     super.dispose();
+  }
+
+  Future<void> _carregarClinicas() async {
+    setState(() {
+      _carregandoClinicas = true;
+      _erroClinicas = null;
+    });
+
+    try {
+      final clinicas = await AgendamentoService.instance.listarClinicas();
+      if (!mounted) return;
+      setState(() {
+        _clinicas = clinicas;
+        _carregandoClinicas = false;
+      });
+    } on ApiException catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _erroClinicas = e.mensagem;
+        _carregandoClinicas = false;
+      });
+    }
+  }
+
+  Future<void> _carregarEspecialidades() async {
+    setState(() {
+      _carregandoEspecialidades = true;
+      _erroEspecialidades = null;
+    });
+
+    try {
+      final especialidades =
+          await AgendamentoService.instance.listarEspecialidades();
+      if (!mounted) return;
+      setState(() {
+        _especialidades = especialidades;
+        _carregandoEspecialidades = false;
+      });
+    } on ApiException catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _erroEspecialidades = e.mensagem;
+        _carregandoEspecialidades = false;
+      });
+    }
+  }
+
+  Future<void> _carregarProfissionais() async {
+    final idClinica = _idClinica;
+    final idEspecialidade = _idEspecialidade;
+    if (idClinica == null || idEspecialidade == null) return;
+
+    setState(() {
+      _carregandoProfissionais = true;
+      _erroProfissionais = null;
+    });
+
+    try {
+      final profissionais = await AgendamentoService.instance.listarProfissionais(
+        idEspecialidade: idEspecialidade,
+        idClinica: idClinica,
+      );
+      if (!mounted ||
+          _idClinica != idClinica ||
+          _idEspecialidade != idEspecialidade) {
+        return;
+      }
+      setState(() {
+        _profissionais = profissionais;
+        _carregandoProfissionais = false;
+      });
+    } on ApiException catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _erroProfissionais = e.mensagem;
+        _carregandoProfissionais = false;
+      });
+    }
+  }
+
+  Future<void> _carregarHorarios() async {
+    final idProfissional = _idProfissional;
+    final data = _data;
+    if (idProfissional == null || data == null) return;
+
+    setState(() {
+      _carregandoHorarios = true;
+      _erroHorarios = null;
+      _horarioSelecionado = null;
+    });
+
+    try {
+      final horarios =
+          await AgendamentoService.instance.listarHorariosDisponiveis(
+        idProfissional,
+      );
+      if (!mounted || _idProfissional != idProfissional || _data != data) {
+        return;
+      }
+      setState(() {
+        _horarios = horarios
+          .where((horario) => horario.disponivel)
+            .where((horario) => DateUtils.isSameDay(horario.data, data))
+            .toList();
+        _carregandoHorarios = false;
+      });
+    } on ApiException catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _erroHorarios = e.mensagem;
+        _carregandoHorarios = false;
+      });
+    }
+  }
+
+  void _selecionarClinica(String? valor) {
+    setState(() {
+      _idClinica = int.tryParse(valor ?? '');
+      _idProfissional = null;
+      _profissionais = const [];
+      _horarios = const [];
+      _horarioSelecionado = null;
+    });
+    _carregarProfissionais();
+  }
+
+  void _selecionarEspecialidade(String? valor) {
+    setState(() {
+      _idEspecialidade = int.tryParse(valor ?? '');
+      _idProfissional = null;
+      _profissionais = const [];
+      _horarios = const [];
+      _horarioSelecionado = null;
+    });
+    _carregarProfissionais();
+  }
+
+  void _selecionarProfissional(String? valor) {
+    setState(() {
+      _idProfissional = int.tryParse(valor ?? '');
+      _horarios = const [];
+      _horarioSelecionado = null;
+    });
+    _carregarHorarios();
   }
 
   Future<void> _selecionarData() async {
@@ -68,10 +223,12 @@ class _CriarAgendamentoScreenState extends State<CriarAgendamentoScreen> {
     setState(() {
       _data = data;
       _dataController.text = _formatarData(data);
+      _horarioSelecionado = null;
     });
+    await _carregarHorarios();
   }
 
-  void _agendar() {
+  Future<void> _agendar() async {
     final valido = _formKey.currentState?.validate() ?? false;
 
     if (!valido) {
@@ -79,16 +236,48 @@ class _CriarAgendamentoScreenState extends State<CriarAgendamentoScreen> {
       return;
     }
 
-    // TODO: enviar o agendamento para a API antes de fechar a tela.
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          'Consulta com $_profissional em ${_dataController.text} '
-          'às $_horario.',
-        ),
-      ),
+    final data = _data;
+    final horario = _horarioSelecionado;
+    final idClinica = _idClinica;
+    final idProfissional = _idProfissional;
+    if (data == null ||
+        horario == null ||
+        idClinica == null ||
+        idProfissional == null) {
+      return;
+    }
+
+    final partesHora = horario.horaInicio.split(':');
+    final dataHoraConsulta = DateTime.utc(
+      data.year,
+      data.month,
+      data.day,
+      int.parse(partesHora[0]),
+      int.parse(partesHora[1]),
     );
-    Navigator.pop(context);
+
+    setState(() => _enviando = true);
+    try {
+      await AgendamentoService.instance.criarAgendamento(
+        idClinica: idClinica,
+        idProfissional: idProfissional,
+        idHorario: horario.idHorario,
+        dataHoraConsulta: dataHoraConsulta,
+      );
+      if (!mounted) return;
+      Navigator.pop(context);
+      AppNavigator.messengerKey.currentState
+        ?..clearSnackBars()
+        ..showSnackBar(
+          const SnackBar(content: Text('Agendamento criado com sucesso.')),
+        );
+    } on ApiException catch (e) {
+      if (!mounted) return;
+      setState(() => _enviando = false);
+      ScaffoldMessenger.of(context)
+        ..clearSnackBars()
+        ..showSnackBar(SnackBar(content: Text(e.mensagem)));
+    }
   }
 
   @override
@@ -97,8 +286,32 @@ class _CriarAgendamentoScreenState extends State<CriarAgendamentoScreen> {
     final screenWidth = MediaQuery.sizeOf(context).width;
     final horizontalPadding = (screenWidth * 0.045).clamp(16.0, 32.0);
 
-    final profissionais =
-        _profissionaisPorEspecialidade[_especialidade] ?? const <String>[];
+    final clinicaIds = _clinicas.map((clinica) => '${clinica.idClinica}').toList();
+    final nomesClinicas = {
+      for (final clinica in _clinicas)
+        '${clinica.idClinica}': clinica.nome,
+    };
+    final especialidadeIds =
+        _especialidades.map((especialidade) => '${especialidade.idEspecialidade}').toList();
+    final nomesEspecialidades = {
+      for (final especialidade in _especialidades)
+        '${especialidade.idEspecialidade}': especialidade.nome,
+    };
+    final profissionalIds =
+        _profissionais.map((profissional) => '${profissional.idProfissional}').toList();
+    final nomesProfissionais = {
+      for (final profissional in _profissionais)
+        '${profissional.idProfissional}': profissional.nome,
+    };
+    final horariosDoDia = _horarios
+      .where((horario) => horario.disponivel)
+        .where((horario) => _data != null && DateUtils.isSameDay(horario.data, _data))
+        .toList();
+    final horarioIds = horariosDoDia.map((horario) => '${horario.idHorario}').toList();
+    final nomesHorarios = {
+      for (final horario in horariosDoDia)
+        '${horario.idHorario}': horario.horaExibicao,
+    };
 
     return Scaffold(
       appBar: const AppBarWidget(showBackButton: true),
@@ -130,28 +343,64 @@ class _CriarAgendamentoScreenState extends State<CriarAgendamentoScreen> {
                     const SizedBox(height: 24),
 
                     _CampoDropdown(
+                      rotulo: 'Clínica',
+                      hint: _carregandoClinicas
+                          ? 'Carregando clínicas...'
+                          : _clinicas.isEmpty
+                              ? 'Nenhuma clínica disponível'
+                              : 'Selecione a clínica',
+                      mensagemErro: 'Selecione a clínica',
+                      opcoes: clinicaIds,
+                      rotulosOpcoes: nomesClinicas,
+                        onChanged: _clinicas.isEmpty || _carregandoClinicas
+                          ? null
+                          : _selecionarClinica,
+                    ),
+                    if (_erroClinicas != null) ...[
+                      const SizedBox(height: 8),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: TextButton(
+                          onPressed: _carregarClinicas,
+                          child: const Text('Tentar carregar clínicas novamente'),
+                        ),
+                      ),
+                    ],
+                    const SizedBox(height: 20),
+
+                    _CampoDropdown(
+                      key: ValueKey('especialidade-$_idClinica'),
                       rotulo: 'Especialidade',
-                      hint: 'Selecione a especialidade médica',
+                      hint: _carregandoEspecialidades
+                          ? 'Carregando especialidades...'
+                          : 'Selecione a especialidade médica',
                       mensagemErro: 'Selecione a especialidade',
-                      opcoes: _profissionaisPorEspecialidade.keys.toList(),
-                      onChanged: (valor) => setState(() {
-                        _especialidade = valor;
-                        _profissional = null; // lista depende da especialidade
-                      }),
+                      opcoes: especialidadeIds,
+                      rotulosOpcoes: nomesEspecialidades,
+                      onChanged: _especialidades.isEmpty ||
+                              _carregandoEspecialidades
+                          ? null
+                          : _selecionarEspecialidade,
                     ),
                     const SizedBox(height: 20),
 
                     // A key recria o campo (e limpa a seleção) quando a
                     // especialidade muda. Fica desabilitado até escolher uma.
                     _CampoDropdown(
-                      key: ValueKey('profissional-$_especialidade'),
+                      key: ValueKey('profissional-$_idClinica-$_idEspecialidade'),
                       rotulo: 'Profissional',
-                      hint: 'Selecione o profissional',
+                      hint: _idClinica == null || _idEspecialidade == null
+                        ? 'Selecione clínica e especialidade'
+                        : _carregandoProfissionais
+                          ? 'Carregando profissionais...'
+                          : _erroProfissionais ?? 'Selecione o profissional',
                       mensagemErro: 'Selecione o profissional',
-                      opcoes: profissionais,
-                      onChanged: _especialidade == null
+                      opcoes: profissionalIds,
+                      rotulosOpcoes: nomesProfissionais,
+                      onChanged: profissionalIds.isEmpty ||
+                          _carregandoProfissionais
                           ? null
-                          : (valor) => setState(() => _profissional = valor),
+                        : _selecionarProfissional,
                     ),
                     const SizedBox(height: 20),
 
@@ -165,14 +414,18 @@ class _CriarAgendamentoScreenState extends State<CriarAgendamentoScreen> {
                               controller: _dataController,
                               readOnly: true,
                               showCursor: false,
-                              onTap: _selecionarData,
+                              onTap: _idProfissional == null
+                                  ? null
+                                  : _selecionarData,
                               style: TextStyle(
                                 fontSize: 14,
                                 color: scheme.primary,
                               ),
                               decoration: _decoracaoCampo(
                                 context,
-                                hint: 'dd/mm/aaaa',
+                                hint: _idProfissional == null
+                                  ? 'Selecione profissional'
+                                  : 'dd/mm/aaaa',
                                 suffixIcon: Icon(
                                   Icons.calendar_today_outlined,
                                   size: 20,
@@ -180,7 +433,7 @@ class _CriarAgendamentoScreenState extends State<CriarAgendamentoScreen> {
                                 ),
                               ),
                               validator: (valor) =>
-                                  (valor == null || valor.isEmpty)
+                                    (valor == null || valor.isEmpty)
                                       ? 'Selecione a data'
                                       : null,
                             ),
@@ -189,12 +442,33 @@ class _CriarAgendamentoScreenState extends State<CriarAgendamentoScreen> {
                         const SizedBox(width: 16),
                         Expanded(
                           child: _CampoDropdown(
+                            key: ValueKey(
+                              'horario-$_idProfissional-${_data?.toIso8601String()}',
+                            ),
                             rotulo: 'Hora',
-                            hint: 'Horário',
+                            hint: _idProfissional == null
+                              ? 'Selecione profissional'
+                              : _data == null
+                                ? 'Selecione a data'
+                                : _carregandoHorarios
+                                  ? 'Carregando horários...'
+                                  : horariosDoDia.isEmpty
+                                    ? _erroHorarios ??
+                                      'Sem horários livres'
+                                    : 'Selecione o horário',
                             mensagemErro: 'Selecione o horário',
-                            opcoes: _horarios,
-                            onChanged: (valor) =>
-                                setState(() => _horario = valor),
+                            opcoes: horarioIds,
+                            rotulosOpcoes: nomesHorarios,
+                            onChanged: horariosDoDia.isEmpty ||
+                                _carregandoHorarios
+                              ? null
+                              : (valor) => setState(() {
+                                final id = int.tryParse(valor ?? '');
+                                _horarioSelecionado = horariosDoDia
+                                  .where((horario) =>
+                                    horario.idHorario == id)
+                                  .firstOrNull;
+                                }),
                           ),
                         ),
                       ],
@@ -230,7 +504,7 @@ class _CriarAgendamentoScreenState extends State<CriarAgendamentoScreen> {
                           child: SizedBox(
                             height: 46,
                             child: ElevatedButton(
-                              onPressed: _agendar,
+                              onPressed: _enviando ? null : _agendar,
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: scheme.secondary,
                                 foregroundColor: scheme.onSecondary,
@@ -239,10 +513,18 @@ class _CriarAgendamentoScreenState extends State<CriarAgendamentoScreen> {
                                   borderRadius: BorderRadius.circular(6),
                                 ),
                               ),
-                              child: const Text(
-                                'Agendar',
-                                style: TextStyle(fontSize: 16),
-                              ),
+                              child: _enviando
+                                  ? const SizedBox(
+                                      width: 20,
+                                      height: 20,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                      ),
+                                    )
+                                  : const Text(
+                                      'Agendar',
+                                      style: TextStyle(fontSize: 16),
+                                    ),
                             ),
                           ),
                         ),
@@ -327,6 +609,7 @@ class _CampoDropdown extends StatelessWidget {
   final String hint;
   final String mensagemErro;
   final List<String> opcoes;
+  final Map<String, String>? rotulosOpcoes;
   final ValueChanged<String?>? onChanged;
 
   const _CampoDropdown({
@@ -336,6 +619,7 @@ class _CampoDropdown extends StatelessWidget {
     required this.mensagemErro,
     required this.opcoes,
     required this.onChanged,
+    this.rotulosOpcoes,
   });
 
   @override
@@ -369,7 +653,10 @@ class _CampoDropdown extends StatelessWidget {
         ),
         items: [
           for (final opcao in opcoes)
-            DropdownMenuItem<String>(value: opcao, child: Text(opcao)),
+            DropdownMenuItem<String>(
+              value: opcao,
+              child: Text(rotulosOpcoes?[opcao] ?? opcao),
+            ),
         ],
         onChanged: onChanged,
         validator: (valor) => valor == null ? mensagemErro : null,

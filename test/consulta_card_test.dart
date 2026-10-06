@@ -5,7 +5,7 @@ import 'package:projeto_final/features/historico/models/consulta.dart';
 import 'package:projeto_final/features/historico/widgets/consulta_card.dart';
 
 void main() {
-  testWidgets('ConsultaCard mostra médico, data, hora e observações padrão',
+  testWidgets('ConsultaCard mostra médico, data e hora sem observações',
       (tester) async {
     final consulta = Consulta(
       medico: 'Dr. Tom Holland',
@@ -28,6 +28,6 @@ void main() {
     expect(find.text('AGO'), findsOneWidget);
     expect(find.text('14:05h'), findsOneWidget);
     expect(find.text('Consultório'), findsOneWidget);
-    expect(find.text('-'), findsOneWidget); // observações padrão
+    expect(find.text('Observações'), findsNothing);
   });
 }

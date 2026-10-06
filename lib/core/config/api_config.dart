@@ -10,7 +10,7 @@ class ApiConfig {
 
   static const String baseUrl = String.fromEnvironment(
     'API_URL',
-    defaultValue: 'http://168.138.142.124:3000/api',
+    defaultValue: 'https://168-138-142-124.sslip.io/api',
   );
 
   /// Tempo máximo de espera por uma resposta do servidor.

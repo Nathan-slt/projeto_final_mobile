@@ -152,7 +152,10 @@ class _CadastroScreenState extends State<CadastroScreen> {
       child: Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: false,
+          backgroundColor: scheme.surface,
           centerTitle: true,
+          scrolledUnderElevation: 0,
+          surfaceTintColor: Colors.transparent,
           toolbarHeight: 100,
           title: SizedBox(
             height: 70,

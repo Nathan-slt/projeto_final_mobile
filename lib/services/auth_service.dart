@@ -22,6 +22,15 @@ class AuthService {
   /// Sessão atual, ou nulo se ninguém estiver logado.
   Sessao? get sessao => _sessao;
 
+  /// Só pacientes com sessão ainda válida podem acessar a área protegida.
+  bool get estaAutenticado {
+    final atual = _sessao;
+    return atual != null &&
+        !atual.expirada &&
+        atual.papel == PapelUsuario.paciente &&
+        atual.idPaciente != null;
+  }
+
   /// POST /usuarios/login
   ///
   /// Lança [ApiException] com mensagem pronta para o usuário.

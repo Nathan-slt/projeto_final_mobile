@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:projeto_final/services/auth_service.dart';
 import 'package:projeto_final/features/auth/screens/cadastro_screen.dart';
 import 'package:projeto_final/features/auth/screens/login_screen.dart';
 import 'package:projeto_final/features/auth/screens/senha_screen.dart';
@@ -27,4 +28,20 @@ class AppRoutes {
         home: (context) => const MainShellScreen(),
         agendamento: (context) => const CriarAgendamentoScreen(),
       };
+
+  static Route<dynamic>? onGenerateRoute(RouteSettings settings) {
+    final builder = routes[settings.name];
+    if (builder == null) return null;
+
+    final protegida = settings.name == home || settings.name == agendamento;
+    final redirecionarParaLogin =
+        protegida && !AuthService.instance.estaAutenticado;
+
+    return MaterialPageRoute<dynamic>(
+      settings: redirecionarParaLogin
+          ? const RouteSettings(name: login)
+          : settings,
+      builder: redirecionarParaLogin ? routes[login]! : builder,
+    );
+  }
 }

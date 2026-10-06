@@ -32,10 +32,7 @@ class PerfilService {
       throw const ApiException('Resposta inesperada do servidor.');
     }
 
-    // Hoje o /me não inclui o paciente. Se o backend passar a incluir
-    // (Sequelize `include: Paciente`), o telefone virá em json['Paciente'].
-    final paciente = json['Paciente'];
-    String? telefone = paciente is Map ? paciente['telefone'] as String? : null;
+    String? telefone = _telefoneDaResposta(json);
     telefone ??= await _lerTelefoneLocal(usuario.idUsuario);
 
     return Perfil(usuario: usuario, telefone: telefone);
@@ -48,6 +45,19 @@ class PerfilService {
       corpo: {'telefone': telefone},
     );
     await _armazenamento.salvarTelefone(idUsuario, telefone);
+  }
+
+  /// PATCH /usuarios/:idUsuario (campos permitidos: nome e email).
+  Future<void> atualizarDadosUsuario(
+    int idUsuario, {
+    String? nome,
+    String? email,
+  }) async {
+    final corpo = <String, String>{
+      if (nome != null) 'nome': nome,
+      if (email != null) 'email': email,
+    };
+    await _api.patch('/usuarios/$idUsuario', corpo: corpo);
   }
 
   /// POST /usuarios/:idUsuario/alterar-senha
@@ -68,5 +78,20 @@ class PerfilService {
     } catch (_) {
       return null;
     }
+  }
+
+  String? _telefoneDaResposta(Map<String, dynamic> json) {
+    final paciente = json['Paciente'] ?? json['paciente'];
+    final valores = [
+      json['telefone'],
+      if (paciente is Map) paciente['telefone'],
+    ];
+
+    for (final valor in valores) {
+      if (valor == null) continue;
+      final telefone = valor.toString().trim();
+      if (telefone.isNotEmpty) return telefone;
+    }
+    return null;
   }
 }

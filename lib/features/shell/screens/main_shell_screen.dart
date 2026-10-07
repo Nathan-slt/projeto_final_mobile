@@ -22,13 +22,6 @@ class MainShellScreen extends StatefulWidget {
 
 class _MainShellScreenState extends State<MainShellScreen> {
   // Ordem precisa bater com os índices do Rodape.
-  static const List<Widget> _abas = [
-    HomeScreen(), // 0
-    HistoricoScreen(), // 1
-    FilaScreen(), // 2
-    PerfilScreen(), // 3
-  ];
-
   late int _currentIndex = widget.initialIndex;
 
   void _selecionarAba(int index) {
@@ -47,7 +40,12 @@ class _MainShellScreenState extends State<MainShellScreen> {
       child: Scaffold(
         body: IndexedStack(
           index: _currentIndex,
-          children: _abas,
+          children: [
+            const HomeScreen(), // 0
+            const HistoricoScreen(), // 1
+            FilaScreen(isActive: _currentIndex == 2), // 2
+            const PerfilScreen(), // 3
+          ],
         ),
         bottomNavigationBar: Rodape(
           currentIndex: _currentIndex,

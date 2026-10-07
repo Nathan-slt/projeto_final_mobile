@@ -50,8 +50,7 @@ class _CalendarioState extends State<Calendario> {
                   context: context,
                   text: 'Mês',
                   icon: Icons.calendar_month,
-                  selected:
-                      _calendarFormat == CalendarFormat.month,
+                  selected: _calendarFormat == CalendarFormat.month,
                   onTap: () {
                     setState(() {
                       _calendarFormat = CalendarFormat.month;
@@ -66,8 +65,7 @@ class _CalendarioState extends State<Calendario> {
                   context: context,
                   text: 'Semana',
                   icon: Icons.calendar_view_week,
-                  selected:
-                      _calendarFormat == CalendarFormat.week,
+                  selected: _calendarFormat == CalendarFormat.week,
                   onTap: () {
                     setState(() {
                       _calendarFormat = CalendarFormat.week;
@@ -120,6 +118,7 @@ class _CalendarioState extends State<Calendario> {
 
           calendarStyle: CalendarStyle(
             outsideDaysVisible: true,
+            markerMargin: const EdgeInsets.only(top: 1),
 
             // Dia de hoje (quando não é o selecionado) usa a secondary
             // com menos opacidade, pra não competir com o dia selecionado.
@@ -133,11 +132,6 @@ class _CalendarioState extends State<Calendario> {
             ),
 
             markersMaxCount: 1,
-            markerSize: 6,
-            markerDecoration: BoxDecoration(
-              color: primary,
-              shape: BoxShape.circle,
-            ),
 
             // Dia selecionado usa a cor secondary do tema.
             selectedDecoration: BoxDecoration(
@@ -149,6 +143,27 @@ class _CalendarioState extends State<Calendario> {
               fontWeight: FontWeight.bold,
             ),
           ),
+          calendarBuilders: CalendarBuilders(
+            markerBuilder: (context, day, events) {
+              if (events.isEmpty) return null;
+
+              return Transform.translate(
+                key: const ValueKey('appointment-marker-position'),
+                offset: const Offset(0, -8),
+                child: Container(
+                  key: const ValueKey('appointment-marker'),
+                  width: 6,
+                  height: 6,
+                  decoration: BoxDecoration(
+                    color: isSameDay(day, _selectedDate)
+                        ? Colors.white
+                        : primary,
+                    shape: BoxShape.circle,
+                  ),
+                ),
+              );
+            },
+          ),
         ),
 
         // CONSULTAS DO DIA SELECIONADO
@@ -157,10 +172,7 @@ class _CalendarioState extends State<Calendario> {
           alignment: Alignment.centerLeft,
           child: Text(
             'Consultas em ${formatarData(_selectedDate)}',
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
         ),
         const SizedBox(height: 8),
@@ -202,27 +214,16 @@ class _CalendarioState extends State<Calendario> {
         decoration: BoxDecoration(
           color: selected ? secondary : surface,
 
-          border: Border.all(
-            color: secondary,
-            width: 1,
-          ),
+          border: Border.all(color: secondary, width: 1),
 
           borderRadius: BorderRadius.only(
-            topLeft: left
-                ? const Radius.circular(10)
-                : Radius.zero,
+            topLeft: left ? const Radius.circular(10) : Radius.zero,
 
-            bottomLeft: left
-                ? const Radius.circular(10)
-                : Radius.zero,
+            bottomLeft: left ? const Radius.circular(10) : Radius.zero,
 
-            topRight: !left
-                ? const Radius.circular(10)
-                : Radius.zero,
+            topRight: !left ? const Radius.circular(10) : Radius.zero,
 
-            bottomRight: !left
-                ? const Radius.circular(10)
-                : Radius.zero,
+            bottomRight: !left ? const Radius.circular(10) : Radius.zero,
           ),
         ),
 
@@ -230,11 +231,7 @@ class _CalendarioState extends State<Calendario> {
           mainAxisAlignment: MainAxisAlignment.center,
 
           children: [
-            Icon(
-              icon,
-              size: 20,
-              color: selected ? Colors.white : secondary,
-            ),
+            Icon(icon, size: 20, color: selected ? Colors.white : secondary),
 
             const SizedBox(width: 8),
 
